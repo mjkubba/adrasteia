@@ -24,6 +24,10 @@ var _path = require('path');
 
 var _path2 = _interopRequireDefault(_path);
 
+var _mongoose = require('mongoose');
+
+var _mongoose2 = _interopRequireDefault(_mongoose);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 // const { exec } = require('child_process');
@@ -42,18 +46,28 @@ var port = process.env.PORT || 3333;
 app.listen(port, function () {
   console.log('info', '[EXPRESS] - listening port: %d', port);
 });
-//
-// app.get('/exec', (req, res) => {
-//   exec('ls /tmp', (error, stdout, stderr) => {
-//     if (error) {
-//       console.error(`exec error: ${error}`);
-//       return;
-//     }
-//     console.log(`stdout: ${stdout}`);
-//     res.send(stdout.toString())
-//   });
-// });
 
+_mongoose2.default.connect('mongodb://localhost:27017/mydb');
+var vpc = new _mongoose2.default.Schema({
+  name: { type: String, default: '' },
+  description: { type: String, default: '' }
+});
+var MyVpc = _mongoose2.default.model('vpc', vpc);
+
+app.get('/vpc', function (req, res) {
+  MyVpc.find({}, function (err, docs) {
+    console.log(docs);
+    res.send(docs);
+  });
+});
+
+app.post('/vpc', function (req, res) {
+  MyVpc.update({ name: req.body.name }, { name: req.body.name, description: req.body.description }, { upsert: true }, function (err) {
+    if (err) return handleError(err);
+    console.log("saved something to db");
+    res.send("saved something to db");
+  });
+});
 
 app.get('*', function (req, res) {
   res.sendFile(_path2.default.join(__dirname, '../static/index.html'));
