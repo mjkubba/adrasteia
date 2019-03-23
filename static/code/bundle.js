@@ -9338,15 +9338,15 @@
 	
 	var _data2 = _interopRequireDefault(_data);
 	
-	var _main = __webpack_require__(605);
+	var _main = __webpack_require__(609);
 	
 	var _main2 = _interopRequireDefault(_main);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
-	__webpack_require__(607).polyfill(); /* eslint-disable react/jsx-filename-extension */
+	__webpack_require__(611).polyfill(); /* eslint-disable react/jsx-filename-extension */
 	
-	__webpack_require__(609);
+	__webpack_require__(613);
 	
 	(0, _reactDom.render)(_react2.default.createElement(
 	  _reactRouter.Router,
@@ -37382,7 +37382,8 @@
 	
 	var utils = __webpack_require__(585);
 	var bind = __webpack_require__(586);
-	var Axios = __webpack_require__(587);
+	var Axios = __webpack_require__(588);
+	var defaults = __webpack_require__(589);
 	
 	/**
 	 * Create an instance of Axios
@@ -37404,21 +37405,31 @@
 	}
 	
 	// Create the default instance to be exported
-	var axios = module.exports = createInstance();
+	var axios = createInstance(defaults);
 	
 	// Expose Axios class to allow class inheritance
 	axios.Axios = Axios;
 	
 	// Factory for creating new instances
-	axios.create = function create(defaultConfig) {
-	  return createInstance(defaultConfig);
+	axios.create = function create(instanceConfig) {
+	  return createInstance(utils.merge(defaults, instanceConfig));
 	};
+	
+	// Expose Cancel & CancelToken
+	axios.Cancel = __webpack_require__(606);
+	axios.CancelToken = __webpack_require__(607);
+	axios.isCancel = __webpack_require__(603);
 	
 	// Expose all/spread
 	axios.all = function all(promises) {
 	  return Promise.all(promises);
 	};
-	axios.spread = __webpack_require__(604);
+	axios.spread = __webpack_require__(608);
+	
+	module.exports = axios;
+	
+	// Allow use of default import syntax in TypeScript
+	module.exports.default = axios;
 
 
 /***/ }),
@@ -37428,6 +37439,7 @@
 	'use strict';
 	
 	var bind = __webpack_require__(586);
+	var isBuffer = __webpack_require__(587);
 	
 	/*global toString:true*/
 	
@@ -37602,13 +37614,15 @@
 	 *  typeof document -> undefined
 	 *
 	 * react-native:
-	 *  typeof document.createElement -> undefined
+	 *  navigator.product -> 'ReactNative'
 	 */
 	function isStandardBrowserEnv() {
+	  if (typeof navigator !== 'undefined' && navigator.product === 'ReactNative') {
+	    return false;
+	  }
 	  return (
 	    typeof window !== 'undefined' &&
-	    typeof document !== 'undefined' &&
-	    typeof document.createElement === 'function'
+	    typeof document !== 'undefined'
 	  );
 	}
 	
@@ -37631,7 +37645,7 @@
 	  }
 	
 	  // Force an array if not already something iterable
-	  if (typeof obj !== 'object' && !isArray(obj)) {
+	  if (typeof obj !== 'object') {
 	    /*eslint no-param-reassign:0*/
 	    obj = [obj];
 	  }
@@ -37644,7 +37658,7 @@
 	  } else {
 	    // Iterate over object keys
 	    for (var key in obj) {
-	      if (obj.hasOwnProperty(key)) {
+	      if (Object.prototype.hasOwnProperty.call(obj, key)) {
 	        fn.call(null, obj[key], key, obj);
 	      }
 	    }
@@ -37706,6 +37720,7 @@
 	module.exports = {
 	  isArray: isArray,
 	  isArrayBuffer: isArrayBuffer,
+	  isBuffer: isBuffer,
 	  isFormData: isFormData,
 	  isArrayBufferView: isArrayBufferView,
 	  isString: isString,
@@ -37745,24 +37760,49 @@
 
 /***/ }),
 /* 587 */
+/***/ (function(module, exports) {
+
+	/*!
+	 * Determine if an object is a Buffer
+	 *
+	 * @author   Feross Aboukhadijeh <https://feross.org>
+	 * @license  MIT
+	 */
+	
+	// The _isBuffer check is for Safari 5-7 support, because it's missing
+	// Object.prototype.constructor. Remove this eventually
+	module.exports = function (obj) {
+	  return obj != null && (isBuffer(obj) || isSlowBuffer(obj) || !!obj._isBuffer)
+	}
+	
+	function isBuffer (obj) {
+	  return !!obj.constructor && typeof obj.constructor.isBuffer === 'function' && obj.constructor.isBuffer(obj)
+	}
+	
+	// For Node v0.10 support. Remove this eventually.
+	function isSlowBuffer (obj) {
+	  return typeof obj.readFloatLE === 'function' && typeof obj.slice === 'function' && isBuffer(obj.slice(0, 0))
+	}
+
+
+/***/ }),
+/* 588 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
-	var defaults = __webpack_require__(588);
+	var defaults = __webpack_require__(589);
 	var utils = __webpack_require__(585);
-	var InterceptorManager = __webpack_require__(590);
-	var dispatchRequest = __webpack_require__(591);
-	var isAbsoluteURL = __webpack_require__(602);
-	var combineURLs = __webpack_require__(603);
+	var InterceptorManager = __webpack_require__(600);
+	var dispatchRequest = __webpack_require__(601);
 	
 	/**
 	 * Create a new instance of Axios
 	 *
-	 * @param {Object} defaultConfig The default config for the instance
+	 * @param {Object} instanceConfig The default config for the instance
 	 */
-	function Axios(defaultConfig) {
-	  this.defaults = utils.merge(defaults, defaultConfig);
+	function Axios(instanceConfig) {
+	  this.defaults = instanceConfig;
 	  this.interceptors = {
 	    request: new InterceptorManager(),
 	    response: new InterceptorManager()
@@ -37783,12 +37823,8 @@
 	    }, arguments[1]);
 	  }
 	
-	  config = utils.merge(defaults, this.defaults, { method: 'get' }, config);
-	
-	  // Support baseURL config
-	  if (config.baseURL && !isAbsoluteURL(config.url)) {
-	    config.url = combineURLs(config.baseURL, config.url);
-	  }
+	  config = utils.merge(defaults, {method: 'get'}, this.defaults, config);
+	  config.method = config.method.toLowerCase();
 	
 	  // Hook up interceptors middleware
 	  var chain = [dispatchRequest, undefined];
@@ -37810,7 +37846,7 @@
 	};
 	
 	// Provide aliases for supported request methods
-	utils.forEach(['delete', 'get', 'head'], function forEachMethodNoData(method) {
+	utils.forEach(['delete', 'get', 'head', 'options'], function forEachMethodNoData(method) {
 	  /*eslint func-names:0*/
 	  Axios.prototype[method] = function(url, config) {
 	    return this.request(utils.merge(config || {}, {
@@ -37835,15 +37871,14 @@
 
 
 /***/ }),
-/* 588 */
+/* 589 */
 /***/ (function(module, exports, __webpack_require__) {
 
-	'use strict';
+	/* WEBPACK VAR INJECTION */(function(process) {'use strict';
 	
 	var utils = __webpack_require__(585);
-	var normalizeHeaderName = __webpack_require__(589);
+	var normalizeHeaderName = __webpack_require__(590);
 	
-	var PROTECTION_PREFIX = /^\)\]\}',?\n/;
 	var DEFAULT_CONTENT_TYPE = {
 	  'Content-Type': 'application/x-www-form-urlencoded'
 	};
@@ -37854,11 +37889,26 @@
 	  }
 	}
 	
-	module.exports = {
+	function getDefaultAdapter() {
+	  var adapter;
+	  if (typeof XMLHttpRequest !== 'undefined') {
+	    // For browsers use XHR adapter
+	    adapter = __webpack_require__(591);
+	  } else if (typeof process !== 'undefined') {
+	    // For node use HTTP adapter
+	    adapter = __webpack_require__(591);
+	  }
+	  return adapter;
+	}
+	
+	var defaults = {
+	  adapter: getDefaultAdapter(),
+	
 	  transformRequest: [function transformRequest(data, headers) {
 	    normalizeHeaderName(headers, 'Content-Type');
 	    if (utils.isFormData(data) ||
 	      utils.isArrayBuffer(data) ||
+	      utils.isBuffer(data) ||
 	      utils.isStream(data) ||
 	      utils.isFile(data) ||
 	      utils.isBlob(data)
@@ -37882,7 +37932,6 @@
 	  transformResponse: [function transformResponse(data) {
 	    /*eslint no-param-reassign:0*/
 	    if (typeof data === 'string') {
-	      data = data.replace(PROTECTION_PREFIX, '');
 	      try {
 	        data = JSON.parse(data);
 	      } catch (e) { /* Ignore */ }
@@ -37890,15 +37939,10 @@
 	    return data;
 	  }],
 	
-	  headers: {
-	    common: {
-	      'Accept': 'application/json, text/plain, */*'
-	    },
-	    patch: utils.merge(DEFAULT_CONTENT_TYPE),
-	    post: utils.merge(DEFAULT_CONTENT_TYPE),
-	    put: utils.merge(DEFAULT_CONTENT_TYPE)
-	  },
-	
+	  /**
+	   * A timeout in milliseconds to abort a request. If set to 0 (default) a
+	   * timeout is not created.
+	   */
 	  timeout: 0,
 	
 	  xsrfCookieName: 'XSRF-TOKEN',
@@ -37910,10 +37954,27 @@
 	    return status >= 200 && status < 300;
 	  }
 	};
-
+	
+	defaults.headers = {
+	  common: {
+	    'Accept': 'application/json, text/plain, */*'
+	  }
+	};
+	
+	utils.forEach(['delete', 'get', 'head'], function forEachMethodNoData(method) {
+	  defaults.headers[method] = {};
+	});
+	
+	utils.forEach(['post', 'put', 'patch'], function forEachMethodWithData(method) {
+	  defaults.headers[method] = utils.merge(DEFAULT_CONTENT_TYPE);
+	});
+	
+	module.exports = defaults;
+	
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(335)))
 
 /***/ }),
-/* 589 */
+/* 590 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -37931,184 +37992,18 @@
 
 
 /***/ }),
-/* 590 */
-/***/ (function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	var utils = __webpack_require__(585);
-	
-	function InterceptorManager() {
-	  this.handlers = [];
-	}
-	
-	/**
-	 * Add a new interceptor to the stack
-	 *
-	 * @param {Function} fulfilled The function to handle `then` for a `Promise`
-	 * @param {Function} rejected The function to handle `reject` for a `Promise`
-	 *
-	 * @return {Number} An ID used to remove interceptor later
-	 */
-	InterceptorManager.prototype.use = function use(fulfilled, rejected) {
-	  this.handlers.push({
-	    fulfilled: fulfilled,
-	    rejected: rejected
-	  });
-	  return this.handlers.length - 1;
-	};
-	
-	/**
-	 * Remove an interceptor from the stack
-	 *
-	 * @param {Number} id The ID that was returned by `use`
-	 */
-	InterceptorManager.prototype.eject = function eject(id) {
-	  if (this.handlers[id]) {
-	    this.handlers[id] = null;
-	  }
-	};
-	
-	/**
-	 * Iterate over all the registered interceptors
-	 *
-	 * This method is particularly useful for skipping over any
-	 * interceptors that may have become `null` calling `eject`.
-	 *
-	 * @param {Function} fn The function to call for each interceptor
-	 */
-	InterceptorManager.prototype.forEach = function forEach(fn) {
-	  utils.forEach(this.handlers, function forEachHandler(h) {
-	    if (h !== null) {
-	      fn(h);
-	    }
-	  });
-	};
-	
-	module.exports = InterceptorManager;
-
-
-/***/ }),
 /* 591 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {'use strict';
 	
 	var utils = __webpack_require__(585);
-	var transformData = __webpack_require__(592);
-	
-	/**
-	 * Dispatch a request to the server using whichever adapter
-	 * is supported by the current environment.
-	 *
-	 * @param {object} config The config that is to be used for the request
-	 * @returns {Promise} The Promise to be fulfilled
-	 */
-	module.exports = function dispatchRequest(config) {
-	  // Ensure headers exist
-	  config.headers = config.headers || {};
-	
-	  // Transform request data
-	  config.data = transformData(
-	    config.data,
-	    config.headers,
-	    config.transformRequest
-	  );
-	
-	  // Flatten headers
-	  config.headers = utils.merge(
-	    config.headers.common || {},
-	    config.headers[config.method] || {},
-	    config.headers || {}
-	  );
-	
-	  utils.forEach(
-	    ['delete', 'get', 'head', 'post', 'put', 'patch', 'common'],
-	    function cleanHeaderConfig(method) {
-	      delete config.headers[method];
-	    }
-	  );
-	
-	  var adapter;
-	
-	  if (typeof config.adapter === 'function') {
-	    // For custom adapter support
-	    adapter = config.adapter;
-	  } else if (typeof XMLHttpRequest !== 'undefined') {
-	    // For browsers use XHR adapter
-	    adapter = __webpack_require__(593);
-	  } else if (typeof process !== 'undefined') {
-	    // For node use HTTP adapter
-	    adapter = __webpack_require__(593);
-	  }
-	
-	  return Promise.resolve(config)
-	    // Wrap synchronous adapter errors and pass configuration
-	    .then(adapter)
-	    .then(function onFulfilled(response) {
-	      // Transform response data
-	      response.data = transformData(
-	        response.data,
-	        response.headers,
-	        config.transformResponse
-	      );
-	
-	      return response;
-	    }, function onRejected(error) {
-	      // Transform response data
-	      if (error && error.response) {
-	        error.response.data = transformData(
-	          error.response.data,
-	          error.response.headers,
-	          config.transformResponse
-	        );
-	      }
-	
-	      return Promise.reject(error);
-	    });
-	};
-	
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(335)))
-
-/***/ }),
-/* 592 */
-/***/ (function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	var utils = __webpack_require__(585);
-	
-	/**
-	 * Transform the data for a request or a response
-	 *
-	 * @param {Object|String} data The data to be transformed
-	 * @param {Array} headers The headers for the request or response
-	 * @param {Array|Function} fns A single function or Array of functions
-	 * @returns {*} The resulting transformed data
-	 */
-	module.exports = function transformData(data, headers, fns) {
-	  /*eslint no-param-reassign:0*/
-	  utils.forEach(fns, function transform(fn) {
-	    data = fn(data, headers);
-	  });
-	
-	  return data;
-	};
-
-
-/***/ }),
-/* 593 */
-/***/ (function(module, exports, __webpack_require__) {
-
-	/* WEBPACK VAR INJECTION */(function(process) {'use strict';
-	
-	var utils = __webpack_require__(585);
-	var settle = __webpack_require__(594);
-	var buildURL = __webpack_require__(597);
-	var parseHeaders = __webpack_require__(598);
-	var isURLSameOrigin = __webpack_require__(599);
-	var createError = __webpack_require__(595);
-	var btoa = (typeof window !== 'undefined' && window.btoa) || __webpack_require__(600);
+	var settle = __webpack_require__(592);
+	var buildURL = __webpack_require__(595);
+	var parseHeaders = __webpack_require__(596);
+	var isURLSameOrigin = __webpack_require__(597);
+	var createError = __webpack_require__(593);
+	var btoa = (typeof window !== 'undefined' && window.btoa && window.btoa.bind(window)) || __webpack_require__(598);
 	
 	module.exports = function xhrAdapter(config) {
 	  return new Promise(function dispatchXhrRequest(resolve, reject) {
@@ -38157,7 +38052,9 @@
 	
 	      // The request errored out and we didn't get a response, this will be
 	      // handled by onerror instead
-	      if (request.status === 0) {
+	      // With one exception: request that using file: protocol, most browsers
+	      // will return status as 0 even though it's a successful request
+	      if (request.status === 0 && !(request.responseURL && request.responseURL.indexOf('file:') === 0)) {
 	        return;
 	      }
 	
@@ -38166,7 +38063,7 @@
 	      var responseData = !config.responseType || config.responseType === 'text' ? request.responseText : request.response;
 	      var response = {
 	        data: responseData,
-	        // IE sends 1223 instead of 204 (https://github.com/mzabriskie/axios/issues/201)
+	        // IE sends 1223 instead of 204 (https://github.com/axios/axios/issues/201)
 	        status: request.status === 1223 ? 204 : request.status,
 	        statusText: request.status === 1223 ? 'No Content' : request.statusText,
 	        headers: responseHeaders,
@@ -38184,7 +38081,7 @@
 	    request.onerror = function handleError() {
 	      // Real errors are hidden from us by the browser
 	      // onerror should only fire if it's a network error
-	      reject(createError('Network Error', config));
+	      reject(createError('Network Error', config, null, request));
 	
 	      // Clean up request
 	      request = null;
@@ -38192,7 +38089,8 @@
 	
 	    // Handle timeout
 	    request.ontimeout = function handleTimeout() {
-	      reject(createError('timeout of ' + config.timeout + 'ms exceeded', config, 'ECONNABORTED'));
+	      reject(createError('timeout of ' + config.timeout + 'ms exceeded', config, 'ECONNABORTED',
+	        request));
 	
 	      // Clean up request
 	      request = null;
@@ -38202,10 +38100,10 @@
 	    // This is only done if running in a standard browser environment.
 	    // Specifically not if we're in a web worker, or react-native.
 	    if (utils.isStandardBrowserEnv()) {
-	      var cookies = __webpack_require__(601);
+	      var cookies = __webpack_require__(599);
 	
 	      // Add xsrf header
-	      var xsrfValue = config.withCredentials || isURLSameOrigin(config.url) ?
+	      var xsrfValue = (config.withCredentials || isURLSameOrigin(config.url)) && config.xsrfCookieName ?
 	          cookies.read(config.xsrfCookieName) :
 	          undefined;
 	
@@ -38237,19 +38135,36 @@
 	      try {
 	        request.responseType = config.responseType;
 	      } catch (e) {
-	        if (request.responseType !== 'json') {
+	        // Expected DOMException thrown by browsers not compatible XMLHttpRequest Level 2.
+	        // But, this can be suppressed for 'json' type as it can be parsed by default 'transformResponse' function.
+	        if (config.responseType !== 'json') {
 	          throw e;
 	        }
 	      }
 	    }
 	
 	    // Handle progress if needed
-	    if (typeof config.progress === 'function') {
-	      if (config.method === 'post' || config.method === 'put') {
-	        request.upload.addEventListener('progress', config.progress);
-	      } else if (config.method === 'get') {
-	        request.addEventListener('progress', config.progress);
-	      }
+	    if (typeof config.onDownloadProgress === 'function') {
+	      request.addEventListener('progress', config.onDownloadProgress);
+	    }
+	
+	    // Not all browsers support upload events
+	    if (typeof config.onUploadProgress === 'function' && request.upload) {
+	      request.upload.addEventListener('progress', config.onUploadProgress);
+	    }
+	
+	    if (config.cancelToken) {
+	      // Handle cancellation
+	      config.cancelToken.promise.then(function onCanceled(cancel) {
+	        if (!request) {
+	          return;
+	        }
+	
+	        request.abort();
+	        reject(cancel);
+	        // Clean up request
+	        request = null;
+	      });
 	    }
 	
 	    if (requestData === undefined) {
@@ -38264,12 +38179,12 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(335)))
 
 /***/ }),
-/* 594 */
+/* 592 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
-	var createError = __webpack_require__(595);
+	var createError = __webpack_require__(593);
 	
 	/**
 	 * Resolve or reject a Promise based on response status.
@@ -38288,6 +38203,7 @@
 	      'Request failed with status code ' + response.status,
 	      response.config,
 	      null,
+	      response.request,
 	      response
 	    ));
 	  }
@@ -38295,30 +38211,31 @@
 
 
 /***/ }),
-/* 595 */
+/* 593 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
-	var enhanceError = __webpack_require__(596);
+	var enhanceError = __webpack_require__(594);
 	
 	/**
-	 * Create an Error with the specified message, config, error code, and response.
+	 * Create an Error with the specified message, config, error code, request and response.
 	 *
 	 * @param {string} message The error message.
 	 * @param {Object} config The config.
 	 * @param {string} [code] The error code (for example, 'ECONNABORTED').
-	 @ @param {Object} [response] The response.
+	 * @param {Object} [request] The request.
+	 * @param {Object} [response] The response.
 	 * @returns {Error} The created error.
 	 */
-	module.exports = function createError(message, config, code, response) {
+	module.exports = function createError(message, config, code, request, response) {
 	  var error = new Error(message);
-	  return enhanceError(error, config, code, response);
+	  return enhanceError(error, config, code, request, response);
 	};
 
 
 /***/ }),
-/* 596 */
+/* 594 */
 /***/ (function(module, exports) {
 
 	'use strict';
@@ -38329,21 +38246,23 @@
 	 * @param {Error} error The error to update.
 	 * @param {Object} config The config.
 	 * @param {string} [code] The error code (for example, 'ECONNABORTED').
-	 @ @param {Object} [response] The response.
+	 * @param {Object} [request] The request.
+	 * @param {Object} [response] The response.
 	 * @returns {Error} The error.
 	 */
-	module.exports = function enhanceError(error, config, code, response) {
+	module.exports = function enhanceError(error, config, code, request, response) {
 	  error.config = config;
 	  if (code) {
 	    error.code = code;
 	  }
+	  error.request = request;
 	  error.response = response;
 	  return error;
 	};
 
 
 /***/ }),
-/* 597 */
+/* 595 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -38389,9 +38308,7 @@
 	
 	      if (utils.isArray(val)) {
 	        key = key + '[]';
-	      }
-	
-	      if (!utils.isArray(val)) {
+	      } else {
 	        val = [val];
 	      }
 	
@@ -38417,12 +38334,21 @@
 
 
 /***/ }),
-/* 598 */
+/* 596 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
 	var utils = __webpack_require__(585);
+	
+	// Headers whose duplicates are ignored by node
+	// c.f. https://nodejs.org/api/http.html#http_message_headers
+	var ignoreDuplicateOf = [
+	  'age', 'authorization', 'content-length', 'content-type', 'etag',
+	  'expires', 'from', 'host', 'if-modified-since', 'if-unmodified-since',
+	  'last-modified', 'location', 'max-forwards', 'proxy-authorization',
+	  'referer', 'retry-after', 'user-agent'
+	];
 	
 	/**
 	 * Parse headers into an object
@@ -38451,7 +38377,14 @@
 	    val = utils.trim(line.substr(i + 1));
 	
 	    if (key) {
-	      parsed[key] = parsed[key] ? parsed[key] + ', ' + val : val;
+	      if (parsed[key] && ignoreDuplicateOf.indexOf(key) >= 0) {
+	        return;
+	      }
+	      if (key === 'set-cookie') {
+	        parsed[key] = (parsed[key] ? parsed[key] : []).concat([val]);
+	      } else {
+	        parsed[key] = parsed[key] ? parsed[key] + ', ' + val : val;
+	      }
 	    }
 	  });
 	
@@ -38460,7 +38393,7 @@
 
 
 /***/ }),
-/* 599 */
+/* 597 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -38534,7 +38467,7 @@
 
 
 /***/ }),
-/* 600 */
+/* 598 */
 /***/ (function(module, exports) {
 
 	'use strict';
@@ -38576,7 +38509,7 @@
 
 
 /***/ }),
-/* 601 */
+/* 599 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -38635,7 +38568,194 @@
 
 
 /***/ }),
+/* 600 */
+/***/ (function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	var utils = __webpack_require__(585);
+	
+	function InterceptorManager() {
+	  this.handlers = [];
+	}
+	
+	/**
+	 * Add a new interceptor to the stack
+	 *
+	 * @param {Function} fulfilled The function to handle `then` for a `Promise`
+	 * @param {Function} rejected The function to handle `reject` for a `Promise`
+	 *
+	 * @return {Number} An ID used to remove interceptor later
+	 */
+	InterceptorManager.prototype.use = function use(fulfilled, rejected) {
+	  this.handlers.push({
+	    fulfilled: fulfilled,
+	    rejected: rejected
+	  });
+	  return this.handlers.length - 1;
+	};
+	
+	/**
+	 * Remove an interceptor from the stack
+	 *
+	 * @param {Number} id The ID that was returned by `use`
+	 */
+	InterceptorManager.prototype.eject = function eject(id) {
+	  if (this.handlers[id]) {
+	    this.handlers[id] = null;
+	  }
+	};
+	
+	/**
+	 * Iterate over all the registered interceptors
+	 *
+	 * This method is particularly useful for skipping over any
+	 * interceptors that may have become `null` calling `eject`.
+	 *
+	 * @param {Function} fn The function to call for each interceptor
+	 */
+	InterceptorManager.prototype.forEach = function forEach(fn) {
+	  utils.forEach(this.handlers, function forEachHandler(h) {
+	    if (h !== null) {
+	      fn(h);
+	    }
+	  });
+	};
+	
+	module.exports = InterceptorManager;
+
+
+/***/ }),
+/* 601 */
+/***/ (function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	var utils = __webpack_require__(585);
+	var transformData = __webpack_require__(602);
+	var isCancel = __webpack_require__(603);
+	var defaults = __webpack_require__(589);
+	var isAbsoluteURL = __webpack_require__(604);
+	var combineURLs = __webpack_require__(605);
+	
+	/**
+	 * Throws a `Cancel` if cancellation has been requested.
+	 */
+	function throwIfCancellationRequested(config) {
+	  if (config.cancelToken) {
+	    config.cancelToken.throwIfRequested();
+	  }
+	}
+	
+	/**
+	 * Dispatch a request to the server using the configured adapter.
+	 *
+	 * @param {object} config The config that is to be used for the request
+	 * @returns {Promise} The Promise to be fulfilled
+	 */
+	module.exports = function dispatchRequest(config) {
+	  throwIfCancellationRequested(config);
+	
+	  // Support baseURL config
+	  if (config.baseURL && !isAbsoluteURL(config.url)) {
+	    config.url = combineURLs(config.baseURL, config.url);
+	  }
+	
+	  // Ensure headers exist
+	  config.headers = config.headers || {};
+	
+	  // Transform request data
+	  config.data = transformData(
+	    config.data,
+	    config.headers,
+	    config.transformRequest
+	  );
+	
+	  // Flatten headers
+	  config.headers = utils.merge(
+	    config.headers.common || {},
+	    config.headers[config.method] || {},
+	    config.headers || {}
+	  );
+	
+	  utils.forEach(
+	    ['delete', 'get', 'head', 'post', 'put', 'patch', 'common'],
+	    function cleanHeaderConfig(method) {
+	      delete config.headers[method];
+	    }
+	  );
+	
+	  var adapter = config.adapter || defaults.adapter;
+	
+	  return adapter(config).then(function onAdapterResolution(response) {
+	    throwIfCancellationRequested(config);
+	
+	    // Transform response data
+	    response.data = transformData(
+	      response.data,
+	      response.headers,
+	      config.transformResponse
+	    );
+	
+	    return response;
+	  }, function onAdapterRejection(reason) {
+	    if (!isCancel(reason)) {
+	      throwIfCancellationRequested(config);
+	
+	      // Transform response data
+	      if (reason && reason.response) {
+	        reason.response.data = transformData(
+	          reason.response.data,
+	          reason.response.headers,
+	          config.transformResponse
+	        );
+	      }
+	    }
+	
+	    return Promise.reject(reason);
+	  });
+	};
+
+
+/***/ }),
 /* 602 */
+/***/ (function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	var utils = __webpack_require__(585);
+	
+	/**
+	 * Transform the data for a request or a response
+	 *
+	 * @param {Object|String} data The data to be transformed
+	 * @param {Array} headers The headers for the request or response
+	 * @param {Array|Function} fns A single function or Array of functions
+	 * @returns {*} The resulting transformed data
+	 */
+	module.exports = function transformData(data, headers, fns) {
+	  /*eslint no-param-reassign:0*/
+	  utils.forEach(fns, function transform(fn) {
+	    data = fn(data, headers);
+	  });
+	
+	  return data;
+	};
+
+
+/***/ }),
+/* 603 */
+/***/ (function(module, exports) {
+
+	'use strict';
+	
+	module.exports = function isCancel(value) {
+	  return !!(value && value.__CANCEL__);
+	};
+
+
+/***/ }),
+/* 604 */
 /***/ (function(module, exports) {
 
 	'use strict';
@@ -38655,7 +38775,7 @@
 
 
 /***/ }),
-/* 603 */
+/* 605 */
 /***/ (function(module, exports) {
 
 	'use strict';
@@ -38668,12 +38788,102 @@
 	 * @returns {string} The combined URL
 	 */
 	module.exports = function combineURLs(baseURL, relativeURL) {
-	  return baseURL.replace(/\/+$/, '') + '/' + relativeURL.replace(/^\/+/, '');
+	  return relativeURL
+	    ? baseURL.replace(/\/+$/, '') + '/' + relativeURL.replace(/^\/+/, '')
+	    : baseURL;
 	};
 
 
 /***/ }),
-/* 604 */
+/* 606 */
+/***/ (function(module, exports) {
+
+	'use strict';
+	
+	/**
+	 * A `Cancel` is an object that is thrown when an operation is canceled.
+	 *
+	 * @class
+	 * @param {string=} message The message.
+	 */
+	function Cancel(message) {
+	  this.message = message;
+	}
+	
+	Cancel.prototype.toString = function toString() {
+	  return 'Cancel' + (this.message ? ': ' + this.message : '');
+	};
+	
+	Cancel.prototype.__CANCEL__ = true;
+	
+	module.exports = Cancel;
+
+
+/***/ }),
+/* 607 */
+/***/ (function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	var Cancel = __webpack_require__(606);
+	
+	/**
+	 * A `CancelToken` is an object that can be used to request cancellation of an operation.
+	 *
+	 * @class
+	 * @param {Function} executor The executor function.
+	 */
+	function CancelToken(executor) {
+	  if (typeof executor !== 'function') {
+	    throw new TypeError('executor must be a function.');
+	  }
+	
+	  var resolvePromise;
+	  this.promise = new Promise(function promiseExecutor(resolve) {
+	    resolvePromise = resolve;
+	  });
+	
+	  var token = this;
+	  executor(function cancel(message) {
+	    if (token.reason) {
+	      // Cancellation has already been requested
+	      return;
+	    }
+	
+	    token.reason = new Cancel(message);
+	    resolvePromise(token.reason);
+	  });
+	}
+	
+	/**
+	 * Throws a `Cancel` if cancellation has been requested.
+	 */
+	CancelToken.prototype.throwIfRequested = function throwIfRequested() {
+	  if (this.reason) {
+	    throw this.reason;
+	  }
+	};
+	
+	/**
+	 * Returns an object that contains a new `CancelToken` and a function that, when called,
+	 * cancels the `CancelToken`.
+	 */
+	CancelToken.source = function source() {
+	  var cancel;
+	  var token = new CancelToken(function executor(c) {
+	    cancel = c;
+	  });
+	  return {
+	    token: token,
+	    cancel: cancel
+	  };
+	};
+	
+	module.exports = CancelToken;
+
+
+/***/ }),
+/* 608 */
 /***/ (function(module, exports) {
 
 	'use strict';
@@ -38706,7 +38916,7 @@
 
 
 /***/ }),
-/* 605 */
+/* 609 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -38731,7 +38941,7 @@
 	
 	var _data2 = _interopRequireDefault(_data);
 	
-	var _nav = __webpack_require__(606);
+	var _nav = __webpack_require__(610);
 	
 	var _nav2 = _interopRequireDefault(_nav);
 	
@@ -38835,7 +39045,7 @@
 	exports.default = Main;
 
 /***/ }),
-/* 606 */
+/* 610 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -38898,7 +39108,7 @@
 	          _react2.default.createElement(
 	            'div',
 	            { className: 'col-xs-2' },
-	            _react2.default.createElement('img', { src: 'images/stratus_icon.png', width: '100' })
+	            _react2.default.createElement('img', { src: 'images/db.png', width: '100' })
 	          ),
 	          _react2.default.createElement(
 	            'div',
@@ -38906,7 +39116,7 @@
 	            _react2.default.createElement(
 	              'h1',
 	              null,
-	              ' Stratus '
+	              ' Barnabas '
 	            )
 	          )
 	        )
@@ -38925,7 +39135,7 @@
 	exports.default = Nav;
 
 /***/ }),
-/* 607 */
+/* 611 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	var require;/* WEBPACK VAR INJECTION */(function(process, global) {/*!
@@ -39060,7 +39270,7 @@
 	function attemptVertx() {
 	  try {
 	    var r = require;
-	    var vertx = __webpack_require__(608);
+	    var vertx = __webpack_require__(612);
 	    vertxNext = vertx.runOnLoop || vertx.runOnContext;
 	    return useVertxTimer();
 	  } catch (e) {
@@ -40085,25 +40295,25 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(335), (function() { return this; }())))
 
 /***/ }),
-/* 608 */
+/* 612 */
 /***/ (function(module, exports) {
 
 	/* (ignored) */
 
 /***/ }),
-/* 609 */
+/* 613 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	// the whatwg-fetch polyfill installs the fetch() function
 	// on the global object (window or self)
 	//
 	// Return that as the export for use in Webpack, Browserify etc.
-	__webpack_require__(610);
+	__webpack_require__(614);
 	module.exports = self.fetch.bind(self);
 
 
 /***/ }),
-/* 610 */
+/* 614 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	(function (global, factory) {

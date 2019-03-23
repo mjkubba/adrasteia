@@ -25,10 +25,10 @@ class Nav extends React.Component {
       <div>
         <div className="row">
           <div className="col-xs-2">
-            <img src="images/stratus_icon.png" width="100"/>
+            <img src="images/db.png" width="100"/>
           </div>
           <div className="col-xs-10">
-            <h1> Stratus </h1>
+            <h1> Barnabas </h1>
           </div>
         </div>
       </div>
