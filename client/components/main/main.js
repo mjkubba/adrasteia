@@ -1,8 +1,9 @@
 import React from 'react';
 import axios from 'axios';
 import { browserHistory } from 'react-router';
-import Tf from '../data/data'
-import DataIn from '../data/dataIn'
+import Data from '../data/data'
+import VPCs from '../data/vpc'
+import Subnets from '../data/subnet'
 import Nav from '../nav/nav';
 
 class Main extends React.Component {
@@ -11,9 +12,10 @@ class Main extends React.Component {
     this.state = {
       view: 'main'
     }
-    this.loadS3 = this.loadS3.bind(this);
+    this.loadData = this.loadData.bind(this);
     this.loadMain = this.loadMain.bind(this);
-    this.loadDataIn = this.loadDataIn.bind(this);
+    this.loadVPCs = this.loadVPCs.bind(this);
+    this.loadSubnets = this.loadSubnets.bind(this);
   }
 
   componentWillMount() {
@@ -23,30 +25,35 @@ class Main extends React.Component {
   componentDidMount() {
   }
 
-  loadS3 = (e) => {
+  loadData = (e) => {
       e.preventDefault()
-
-      this.setState({ view: "s3" })
+      this.setState({ view: "data" })
     }
 
-  loadDataIn = (e) => {
+  loadVPCs = (e) => {
       e.preventDefault()
-
-      this.setState({ view: "dataIn" })
+      this.setState({ view: "vpcs" })
     }
+
+  loadSubnets = (e) => {
+      e.preventDefault()
+      this.setState({ view: "subnets" })
+    }
+
   loadMain = (e) => {
       e.preventDefault()
-
       this.setState({ view: "main" })
     }
 
 
   render() {
     let middle
-    if (this.state.view === "s3") {
-      middle = <Tf />
-    } else if (this.state.view === "dataIn") {
-      middle = <DataIn />
+    if (this.state.view === "data") {
+      middle = <Data />
+    } else if (this.state.view === "vpcs") {
+      middle = <VPCs />
+    } else if (this.state.view === "subnets") {
+      middle = <Subnets />
     } else {
       middle = <div />
     }
@@ -58,8 +65,9 @@ class Main extends React.Component {
           </div>
           <div className="col-sm-10">
             <button type="button" className="btn btn-primary" onClick={this.loadMain}>Main</button>
-            <button type="button" className="btn btn-primary" onClick={this.loadS3}>Data</button>
-            <button type="button" className="btn btn-primary" onClick={this.loadDataIn}>DataIn</button>
+            <button type="button" className="btn btn-primary" onClick={this.loadData}>Data</button>
+            <button type="button" className="btn btn-primary" onClick={this.loadVPCs}>Add VPCs</button>
+            <button type="button" className="btn btn-primary" onClick={this.loadSubnets}>Add Subnets</button>
           </div>
         </div>
         <div className="row">

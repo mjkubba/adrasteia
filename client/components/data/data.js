@@ -11,6 +11,7 @@ class Data extends React.Component {
       isOpen: false
     }
     this.readVPC = this.readVPC.bind(this);
+    this.readSubnets = this.readSubnets.bind(this);
     this.handleChange = this.handleChange.bind(this);
   }
 
@@ -26,19 +27,24 @@ class Data extends React.Component {
       event.preventDefault()
     }
 
-readVPC() {
-  axios.get('/vpc')
-    .then((response) => {
-      this.setState({ results: response.data });
-    });
-}
+  readVPC() {
+    axios.get('/vpcs')
+      .then((response) => {
+        this.setState({ results: response.data });
+      });
+  }
 
+  readSubnets(vpc) {
+    console.log("YAY SUBNETS FOR VPC", vpc);
+  }
 
   render() {
     if (this.state.results) {
       this.items = this.state.results.map((item, key) =>
         <tr key={item._id}>
-          <td>{item.vpcName}</td>
+          <td onClick={() => { this.readSubnets(
+            item.vpcName
+          ); }}>{item.vpcName}</td>
           <td>{item.accountNumber}</td>
           <td>{item.description}</td>
         </tr>
@@ -62,7 +68,7 @@ readVPC() {
             </tbody>
           </table>
           </div>
-          <div className="col-sm-2"></div>
+          <div className="col-sm-2">{this.subnets}</div>
         </div>
       </div>
     );

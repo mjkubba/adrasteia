@@ -4,7 +4,7 @@ import mongoose from 'mongoose';
 
 const router = module.exports = express.Router();
 
-mongoose.connect(process.env.MONGO_DB);
+mongoose.connect(process.env.MONGO_DB, { useNewUrlParser: true });
 const vpc = new mongoose.Schema({
   vpcName: { type: String, default: '' },
   description: { type: String, default: '' },
@@ -13,9 +13,25 @@ const vpc = new mongoose.Schema({
 const MyVpc = mongoose.model('vpc', vpc);
 
 
+router.get('/:vpcName', (req, res) => {
+  MyVpc.find({ vpcName: req.params.vpcName }, function (err, docs) {
+    if (err) {
+      console.log("Error: " + err);
+      res.send(err)
+    } else {
+      res.send(docs)
+    }
+  });
+});
+
 router.get('/', (req, res) => {
   MyVpc.find({}, function (err, docs) {
-    res.send(docs)
+    if (err) {
+      console.log("Error: " + err);
+      res.send(err)
+    } else {
+      res.send(docs)
+    }
   });
 });
 

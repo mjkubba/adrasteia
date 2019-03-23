@@ -9344,9 +9344,9 @@
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
-	__webpack_require__(612).polyfill(); /* eslint-disable react/jsx-filename-extension */
+	__webpack_require__(613).polyfill(); /* eslint-disable react/jsx-filename-extension */
 	
-	__webpack_require__(614);
+	__webpack_require__(615);
 	
 	(0, _reactDom.render)(_react2.default.createElement(
 	  _reactRouter.Router,
@@ -37280,6 +37280,7 @@
 	      isOpen: false
 	    };
 	    _this.readVPC = _this.readVPC.bind(_this);
+	    _this.readSubnets = _this.readSubnets.bind(_this);
 	    _this.handleChange = _this.handleChange.bind(_this);
 	    return _this;
 	  }
@@ -37303,13 +37304,20 @@
 	    value: function readVPC() {
 	      var _this2 = this;
 	
-	      _axios2.default.get('/vpc').then(function (response) {
+	      _axios2.default.get('/vpcs').then(function (response) {
 	        _this2.setState({ results: response.data });
 	      });
 	    }
 	  }, {
+	    key: 'readSubnets',
+	    value: function readSubnets(vpc) {
+	      console.log("YAY SUBNETS FOR VPC", vpc);
+	    }
+	  }, {
 	    key: 'render',
 	    value: function render() {
+	      var _this3 = this;
+	
 	      if (this.state.results) {
 	        this.items = this.state.results.map(function (item, key) {
 	          return _react2.default.createElement(
@@ -37317,7 +37325,9 @@
 	            { key: item._id },
 	            _react2.default.createElement(
 	              'td',
-	              null,
+	              { onClick: function onClick() {
+	                  _this3.readSubnets(item.vpcName);
+	                } },
 	              item.vpcName
 	            ),
 	            _react2.default.createElement(
@@ -38960,11 +38970,15 @@
 	
 	var _data2 = _interopRequireDefault(_data);
 	
-	var _dataIn = __webpack_require__(610);
+	var _vpc = __webpack_require__(610);
 	
-	var _dataIn2 = _interopRequireDefault(_dataIn);
+	var _vpc2 = _interopRequireDefault(_vpc);
 	
-	var _nav = __webpack_require__(611);
+	var _subnet = __webpack_require__(611);
+	
+	var _subnet2 = _interopRequireDefault(_subnet);
+	
+	var _nav = __webpack_require__(612);
 	
 	var _nav2 = _interopRequireDefault(_nav);
 	
@@ -38984,30 +38998,33 @@
 	
 	    var _this = _possibleConstructorReturn(this, (Main.__proto__ || Object.getPrototypeOf(Main)).call(this, props));
 	
-	    _this.loadS3 = function (e) {
+	    _this.loadData = function (e) {
 	      e.preventDefault();
-	
-	      _this.setState({ view: "s3" });
+	      _this.setState({ view: "data" });
 	    };
 	
-	    _this.loadDataIn = function (e) {
+	    _this.loadVPCs = function (e) {
 	      e.preventDefault();
+	      _this.setState({ view: "vpcs" });
+	    };
 	
-	      _this.setState({ view: "dataIn" });
+	    _this.loadSubnets = function (e) {
+	      e.preventDefault();
+	      _this.setState({ view: "subnets" });
 	    };
 	
 	    _this.loadMain = function (e) {
 	      e.preventDefault();
-	
 	      _this.setState({ view: "main" });
 	    };
 	
 	    _this.state = {
 	      view: 'main'
 	    };
-	    _this.loadS3 = _this.loadS3.bind(_this);
+	    _this.loadData = _this.loadData.bind(_this);
 	    _this.loadMain = _this.loadMain.bind(_this);
-	    _this.loadDataIn = _this.loadDataIn.bind(_this);
+	    _this.loadVPCs = _this.loadVPCs.bind(_this);
+	    _this.loadSubnets = _this.loadSubnets.bind(_this);
 	    return _this;
 	  }
 	
@@ -39023,10 +39040,12 @@
 	    key: 'render',
 	    value: function render() {
 	      var middle = void 0;
-	      if (this.state.view === "s3") {
+	      if (this.state.view === "data") {
 	        middle = _react2.default.createElement(_data2.default, null);
-	      } else if (this.state.view === "dataIn") {
-	        middle = _react2.default.createElement(_dataIn2.default, null);
+	      } else if (this.state.view === "vpcs") {
+	        middle = _react2.default.createElement(_vpc2.default, null);
+	      } else if (this.state.view === "subnets") {
+	        middle = _react2.default.createElement(_subnet2.default, null);
 	      } else {
 	        middle = _react2.default.createElement('div', null);
 	      }
@@ -39048,13 +39067,18 @@
 	            ),
 	            _react2.default.createElement(
 	              'button',
-	              { type: 'button', className: 'btn btn-primary', onClick: this.loadS3 },
+	              { type: 'button', className: 'btn btn-primary', onClick: this.loadData },
 	              'Data'
 	            ),
 	            _react2.default.createElement(
 	              'button',
-	              { type: 'button', className: 'btn btn-primary', onClick: this.loadDataIn },
-	              'DataIn'
+	              { type: 'button', className: 'btn btn-primary', onClick: this.loadVPCs },
+	              'Add VPCs'
+	            ),
+	            _react2.default.createElement(
+	              'button',
+	              { type: 'button', className: 'btn btn-primary', onClick: this.loadSubnets },
+	              'Add Subnets'
 	            )
 	          )
 	        ),
@@ -39150,7 +39174,7 @@
 	      var bodyOut = { accountNumber: accountNumber, vpcName: vpcName, description: description };
 	      console.log('about to make a call with');
 	      console.log(bodyOut);
-	      _axios2.default.post('/vpc', bodyOut).then(function (response) {
+	      _axios2.default.post('/vpcs', bodyOut).then(function (response) {
 	        console.log(response.data);
 	        _this2.refs.accountNumber.value = "";
 	        _this2.refs.description.value = "";
@@ -39281,6 +39305,176 @@
 	
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 	
+	var Subnet = function (_React$Component) {
+	  _inherits(Subnet, _React$Component);
+	
+	  function Subnet(props) {
+	    _classCallCheck(this, Subnet);
+	
+	    var _this = _possibleConstructorReturn(this, (Subnet.__proto__ || Object.getPrototypeOf(Subnet)).call(this, props));
+	
+	    _this.state = {
+	      view: 'test',
+	      isOpen: false
+	    };
+	    _this.saveData = _this.saveData.bind(_this);
+	    _this.handleChange = _this.handleChange.bind(_this);
+	    return _this;
+	  }
+	
+	  _createClass(Subnet, [{
+	    key: 'componentWillMount',
+	    value: function componentWillMount() {
+	      // This is empty right now
+	    }
+	  }, {
+	    key: 'componentDidMount',
+	    value: function componentDidMount() {}
+	  }, {
+	    key: 'handleChange',
+	    value: function handleChange(event) {
+	      this.state.test = event.target.value;
+	      event.preventDefault();
+	    }
+	  }, {
+	    key: 'saveData',
+	    value: function saveData(subnetName, vpcName, description) {
+	      var _this2 = this;
+	
+	      var bodyOut = { subnetName: subnetName, vpcName: vpcName, description: description };
+	      console.log('about to make a call with');
+	      console.log(bodyOut);
+	      _axios2.default.post('/subnets', bodyOut).then(function (response) {
+	        console.log(response.data);
+	        _this2.refs.subnetName.value = "";
+	        _this2.refs.description.value = "";
+	        _this2.refs.VPC.value = "";
+	        _this2.setState({ results: response.data });
+	      });
+	    }
+	  }, {
+	    key: 'render',
+	    value: function render() {
+	      var _this3 = this;
+	
+	      return _react2.default.createElement(
+	        'div',
+	        null,
+	        _react2.default.createElement(
+	          'div',
+	          { className: 'row' },
+	          _react2.default.createElement('div', { className: 'col-sm-2' }),
+	          _react2.default.createElement(
+	            'div',
+	            { className: 'col-sm-8' },
+	            _react2.default.createElement(
+	              'form',
+	              null,
+	              _react2.default.createElement(
+	                'div',
+	                { className: 'form-group' },
+	                _react2.default.createElement(
+	                  'label',
+	                  { htmlFor: 'subnetName' },
+	                  'Subnet Name'
+	                ),
+	                _react2.default.createElement('input', { type: 'text', className: 'form-control', id: 'subnetName', ref: 'subnetName', 'aria-describedby': 'subnetHelp' }),
+	                _react2.default.createElement(
+	                  'small',
+	                  { id: 'subnetHelp', className: 'form-text text-muted' },
+	                  'Enter your subnet name'
+	                )
+	              ),
+	              _react2.default.createElement(
+	                'div',
+	                { className: 'form-group' },
+	                _react2.default.createElement(
+	                  'label',
+	                  { htmlFor: 'VPC' },
+	                  'VPC Name'
+	                ),
+	                _react2.default.createElement('input', { type: 'text', className: 'form-control', id: 'VPC', ref: 'VPC', 'aria-describedby': 'vpcHelp' }),
+	                _react2.default.createElement(
+	                  'small',
+	                  { id: 'vpcHelp', className: 'form-text text-muted' },
+	                  'Your VPC Name'
+	                )
+	              ),
+	              _react2.default.createElement(
+	                'div',
+	                { className: 'form-group' },
+	                _react2.default.createElement(
+	                  'label',
+	                  { htmlFor: 'description' },
+	                  'Description'
+	                ),
+	                _react2.default.createElement('input', { type: 'text', className: 'form-control', id: 'description', ref: 'description', 'aria-describedby': 'descHelp', placeholder: '' }),
+	                _react2.default.createElement(
+	                  'small',
+	                  { id: 'descHelp', className: 'form-text text-muted' },
+	                  'VPC description'
+	                )
+	              ),
+	              _react2.default.createElement(
+	                'button',
+	                { type: 'button', className: 'btn btn-primary', onClick: function onClick() {
+	                    _this3.saveData(_this3.refs.subnetName.value, _this3.refs.VPC.value, _this3.refs.description.value);
+	                  } },
+	                'Add!'
+	              )
+	            )
+	          ),
+	          _react2.default.createElement('div', { className: 'col-sm-2' })
+	        ),
+	        _react2.default.createElement(
+	          'div',
+	          { className: 'row' },
+	          _react2.default.createElement('div', { className: 'col-sm-2' }),
+	          _react2.default.createElement(
+	            'div',
+	            { className: 'col-sm-8' },
+	            this.state.results
+	          )
+	        )
+	      );
+	    }
+	  }]);
+	
+	  return Subnet;
+	}(_react2.default.Component);
+	
+	exports.default = Subnet;
+
+/***/ }),
+/* 612 */
+/***/ (function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+	
+	var _react = __webpack_require__(333);
+	
+	var _react2 = _interopRequireDefault(_react);
+	
+	var _axios = __webpack_require__(583);
+	
+	var _axios2 = _interopRequireDefault(_axios);
+	
+	var _reactRouter = __webpack_require__(519);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+	
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+	
 	var Nav = function (_React$Component) {
 	  _inherits(Nav, _React$Component);
 	
@@ -39342,7 +39536,7 @@
 	exports.default = Nav;
 
 /***/ }),
-/* 612 */
+/* 613 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	var require;/* WEBPACK VAR INJECTION */(function(process, global) {/*!
@@ -39477,7 +39671,7 @@
 	function attemptVertx() {
 	  try {
 	    var r = require;
-	    var vertx = __webpack_require__(613);
+	    var vertx = __webpack_require__(614);
 	    vertxNext = vertx.runOnLoop || vertx.runOnContext;
 	    return useVertxTimer();
 	  } catch (e) {
@@ -40502,25 +40696,25 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(335), (function() { return this; }())))
 
 /***/ }),
-/* 613 */
+/* 614 */
 /***/ (function(module, exports) {
 
 	/* (ignored) */
 
 /***/ }),
-/* 614 */
+/* 615 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	// the whatwg-fetch polyfill installs the fetch() function
 	// on the global object (window or self)
 	//
 	// Return that as the export for use in Webpack, Browserify etc.
-	__webpack_require__(615);
+	__webpack_require__(616);
 	module.exports = self.fetch.bind(self);
 
 
 /***/ }),
-/* 615 */
+/* 616 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	(function (global, factory) {

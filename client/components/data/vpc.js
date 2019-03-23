@@ -30,7 +30,7 @@ saveData(accountNumber, vpcName, description) {
   var bodyOut = { accountNumber, vpcName,  description }
   console.log('about to make a call with');
   console.log(bodyOut);
-  axios.post('/vpc', bodyOut)
+  axios.post('/vpcs', bodyOut)
     .then((response) => {
       console.log(response.data);
       this.refs.accountNumber.value = ""
