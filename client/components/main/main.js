@@ -2,6 +2,7 @@ import React from 'react';
 import axios from 'axios';
 import { browserHistory } from 'react-router';
 import Tf from '../data/data'
+import DataIn from '../data/dataIn'
 import Nav from '../nav/nav';
 
 class Main extends React.Component {
@@ -12,6 +13,7 @@ class Main extends React.Component {
     }
     this.loadS3 = this.loadS3.bind(this);
     this.loadMain = this.loadMain.bind(this);
+    this.loadDataIn = this.loadDataIn.bind(this);
   }
 
   componentWillMount() {
@@ -26,6 +28,12 @@ class Main extends React.Component {
 
       this.setState({ view: "s3" })
     }
+
+  loadDataIn = (e) => {
+      e.preventDefault()
+
+      this.setState({ view: "dataIn" })
+    }
   loadMain = (e) => {
       e.preventDefault()
 
@@ -37,6 +45,8 @@ class Main extends React.Component {
     let middle
     if (this.state.view === "s3") {
       middle = <Tf />
+    } else if (this.state.view === "dataIn") {
+      middle = <DataIn />
     } else {
       middle = <div />
     }
@@ -49,6 +59,7 @@ class Main extends React.Component {
           <div className="col-sm-10">
             <button type="button" className="btn btn-primary" onClick={this.loadMain}>Main</button>
             <button type="button" className="btn btn-primary" onClick={this.loadS3}>Data</button>
+            <button type="button" className="btn btn-primary" onClick={this.loadDataIn}>DataIn</button>
           </div>
         </div>
         <div className="row">

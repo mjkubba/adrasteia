@@ -9344,9 +9344,9 @@
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
-	__webpack_require__(611).polyfill(); /* eslint-disable react/jsx-filename-extension */
+	__webpack_require__(612).polyfill(); /* eslint-disable react/jsx-filename-extension */
 	
-	__webpack_require__(613);
+	__webpack_require__(614);
 	
 	(0, _reactDom.render)(_react2.default.createElement(
 	  _reactRouter.Router,
@@ -37287,7 +37287,6 @@
 	  _createClass(Data, [{
 	    key: 'componentWillMount',
 	    value: function componentWillMount() {
-	      // This is empty right now
 	      this.readVPC();
 	    }
 	  }, {
@@ -37304,39 +37303,33 @@
 	    value: function readVPC() {
 	      var _this2 = this;
 	
-	      console.log('about to make a call with');
 	      _axios2.default.get('/vpc').then(function (response) {
-	        console.log(response);
-	        _this2.setState({ results: response.data, isOpen: true });
+	        _this2.setState({ results: response.data });
 	      });
 	    }
 	  }, {
 	    key: 'render',
 	    value: function render() {
-	      var _this3 = this;
-	
-	      var lgClose = function lgClose() {
-	        return _this3.setState({ isOpen: false });
-	      };
-	      var style = {
-	        border: '1px solid black'
-	      };
-	      var displayStyle = {
-	        margin: '2%'
-	      };
 	      if (this.state.results) {
 	        this.items = this.state.results.map(function (item, key) {
 	          return _react2.default.createElement(
-	            'p',
+	            'tr',
 	            { key: item._id },
 	            _react2.default.createElement(
-	              'li',
-	              { key: item._id },
-	              item.name,
-	              ' -- ',
-	              item.description
+	              'td',
+	              null,
+	              item.vpcName
 	            ),
-	            _react2.default.createElement('br', null)
+	            _react2.default.createElement(
+	              'td',
+	              null,
+	              item.accountNumber
+	            ),
+	            _react2.default.createElement(
+	              'td',
+	              null,
+	              item.description
+	            )
 	          );
 	        });
 	      }
@@ -37350,7 +37343,38 @@
 	          _react2.default.createElement(
 	            'div',
 	            { className: 'col-sm-8' },
-	            this.items
+	            _react2.default.createElement(
+	              'table',
+	              { className: 'table table-striped table-dark' },
+	              _react2.default.createElement(
+	                'thead',
+	                null,
+	                _react2.default.createElement(
+	                  'tr',
+	                  null,
+	                  _react2.default.createElement(
+	                    'th',
+	                    { scope: 'col' },
+	                    'VPC Name'
+	                  ),
+	                  _react2.default.createElement(
+	                    'th',
+	                    { scope: 'col' },
+	                    'accountNumber'
+	                  ),
+	                  _react2.default.createElement(
+	                    'th',
+	                    { scope: 'col' },
+	                    'Description'
+	                  )
+	                )
+	              ),
+	              _react2.default.createElement(
+	                'tbody',
+	                null,
+	                this.items
+	              )
+	            )
 	          ),
 	          _react2.default.createElement('div', { className: 'col-sm-2' })
 	        )
@@ -37360,11 +37384,6 @@
 	
 	  return Data;
 	}(_react2.default.Component);
-	
-	Data.propTypes = {
-	  params: _react2.default.PropTypes.object,
-	  location: _react2.default.PropTypes.object
-	};
 	
 	exports.default = Data;
 
@@ -38941,7 +38960,11 @@
 	
 	var _data2 = _interopRequireDefault(_data);
 	
-	var _nav = __webpack_require__(610);
+	var _dataIn = __webpack_require__(610);
+	
+	var _dataIn2 = _interopRequireDefault(_dataIn);
+	
+	var _nav = __webpack_require__(611);
 	
 	var _nav2 = _interopRequireDefault(_nav);
 	
@@ -38967,6 +38990,12 @@
 	      _this.setState({ view: "s3" });
 	    };
 	
+	    _this.loadDataIn = function (e) {
+	      e.preventDefault();
+	
+	      _this.setState({ view: "dataIn" });
+	    };
+	
 	    _this.loadMain = function (e) {
 	      e.preventDefault();
 	
@@ -38978,6 +39007,7 @@
 	    };
 	    _this.loadS3 = _this.loadS3.bind(_this);
 	    _this.loadMain = _this.loadMain.bind(_this);
+	    _this.loadDataIn = _this.loadDataIn.bind(_this);
 	    return _this;
 	  }
 	
@@ -38995,6 +39025,8 @@
 	      var middle = void 0;
 	      if (this.state.view === "s3") {
 	        middle = _react2.default.createElement(_data2.default, null);
+	      } else if (this.state.view === "dataIn") {
+	        middle = _react2.default.createElement(_dataIn2.default, null);
 	      } else {
 	        middle = _react2.default.createElement('div', null);
 	      }
@@ -39018,6 +39050,11 @@
 	              'button',
 	              { type: 'button', className: 'btn btn-primary', onClick: this.loadS3 },
 	              'Data'
+	            ),
+	            _react2.default.createElement(
+	              'button',
+	              { type: 'button', className: 'btn btn-primary', onClick: this.loadDataIn },
+	              'DataIn'
 	            )
 	          )
 	        ),
@@ -39046,6 +39083,176 @@
 
 /***/ }),
 /* 610 */
+/***/ (function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+	
+	var _react = __webpack_require__(333);
+	
+	var _react2 = _interopRequireDefault(_react);
+	
+	var _axios = __webpack_require__(583);
+	
+	var _axios2 = _interopRequireDefault(_axios);
+	
+	var _reactRouter = __webpack_require__(519);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+	
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+	
+	var dataIn = function (_React$Component) {
+	  _inherits(dataIn, _React$Component);
+	
+	  function dataIn(props) {
+	    _classCallCheck(this, dataIn);
+	
+	    var _this = _possibleConstructorReturn(this, (dataIn.__proto__ || Object.getPrototypeOf(dataIn)).call(this, props));
+	
+	    _this.state = {
+	      view: 'test',
+	      isOpen: false
+	    };
+	    _this.saveData = _this.saveData.bind(_this);
+	    _this.handleChange = _this.handleChange.bind(_this);
+	    return _this;
+	  }
+	
+	  _createClass(dataIn, [{
+	    key: 'componentWillMount',
+	    value: function componentWillMount() {
+	      // This is empty right now
+	    }
+	  }, {
+	    key: 'componentDidMount',
+	    value: function componentDidMount() {}
+	  }, {
+	    key: 'handleChange',
+	    value: function handleChange(event) {
+	      this.state.test = event.target.value;
+	      event.preventDefault();
+	    }
+	  }, {
+	    key: 'saveData',
+	    value: function saveData(accountNumber, vpcName, description) {
+	      var _this2 = this;
+	
+	      var bodyOut = { accountNumber: accountNumber, vpcName: vpcName, description: description };
+	      console.log('about to make a call with');
+	      console.log(bodyOut);
+	      _axios2.default.post('/vpc', bodyOut).then(function (response) {
+	        console.log(response.data);
+	        _this2.refs.accountNumber.value = "";
+	        _this2.refs.description.value = "";
+	        _this2.refs.VPC.value = "";
+	        _this2.setState({ results: response.data });
+	      });
+	    }
+	  }, {
+	    key: 'render',
+	    value: function render() {
+	      var _this3 = this;
+	
+	      return _react2.default.createElement(
+	        'div',
+	        null,
+	        _react2.default.createElement(
+	          'div',
+	          { className: 'row' },
+	          _react2.default.createElement('div', { className: 'col-sm-2' }),
+	          _react2.default.createElement(
+	            'div',
+	            { className: 'col-sm-8' },
+	            _react2.default.createElement(
+	              'form',
+	              null,
+	              _react2.default.createElement(
+	                'div',
+	                { className: 'form-group' },
+	                _react2.default.createElement(
+	                  'label',
+	                  { htmlFor: 'accountNumber' },
+	                  'Account Number'
+	                ),
+	                _react2.default.createElement('input', { type: 'text', className: 'form-control', id: 'accountNumber', ref: 'accountNumber', 'aria-describedby': 'accountHelp', placeholder: '############' }),
+	                _react2.default.createElement(
+	                  'small',
+	                  { id: 'accountHelp', className: 'form-text text-muted' },
+	                  'Please enter your account number'
+	                )
+	              ),
+	              _react2.default.createElement(
+	                'div',
+	                { className: 'form-group' },
+	                _react2.default.createElement(
+	                  'label',
+	                  { htmlFor: 'VPC' },
+	                  'VPC Name'
+	                ),
+	                _react2.default.createElement('input', { type: 'text', className: 'form-control', id: 'VPC', ref: 'VPC', 'aria-describedby': 'vpcHelp' }),
+	                _react2.default.createElement(
+	                  'small',
+	                  { id: 'vpcHelp', className: 'form-text text-muted' },
+	                  'Your VPC Name'
+	                )
+	              ),
+	              _react2.default.createElement(
+	                'div',
+	                { className: 'form-group' },
+	                _react2.default.createElement(
+	                  'label',
+	                  { htmlFor: 'description' },
+	                  'Description'
+	                ),
+	                _react2.default.createElement('input', { type: 'text', className: 'form-control', id: 'description', ref: 'description', 'aria-describedby': 'descHelp', placeholder: '' }),
+	                _react2.default.createElement(
+	                  'small',
+	                  { id: 'descHelp', className: 'form-text text-muted' },
+	                  'VPC description'
+	                )
+	              ),
+	              _react2.default.createElement(
+	                'button',
+	                { type: 'button', className: 'btn btn-primary', onClick: function onClick() {
+	                    _this3.saveData(_this3.refs.accountNumber.value, _this3.refs.VPC.value, _this3.refs.description.value);
+	                  } },
+	                'Add!'
+	              )
+	            )
+	          ),
+	          _react2.default.createElement('div', { className: 'col-sm-2' })
+	        ),
+	        _react2.default.createElement(
+	          'div',
+	          { className: 'row' },
+	          _react2.default.createElement('div', { className: 'col-sm-2' }),
+	          _react2.default.createElement(
+	            'div',
+	            { className: 'col-sm-8' },
+	            this.state.results
+	          )
+	        )
+	      );
+	    }
+	  }]);
+	
+	  return dataIn;
+	}(_react2.default.Component);
+	
+	exports.default = dataIn;
+
+/***/ }),
+/* 611 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -39135,7 +39342,7 @@
 	exports.default = Nav;
 
 /***/ }),
-/* 611 */
+/* 612 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	var require;/* WEBPACK VAR INJECTION */(function(process, global) {/*!
@@ -39270,7 +39477,7 @@
 	function attemptVertx() {
 	  try {
 	    var r = require;
-	    var vertx = __webpack_require__(612);
+	    var vertx = __webpack_require__(613);
 	    vertxNext = vertx.runOnLoop || vertx.runOnContext;
 	    return useVertxTimer();
 	  } catch (e) {
@@ -40295,25 +40502,25 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(335), (function() { return this; }())))
 
 /***/ }),
-/* 612 */
+/* 613 */
 /***/ (function(module, exports) {
 
 	/* (ignored) */
 
 /***/ }),
-/* 613 */
+/* 614 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	// the whatwg-fetch polyfill installs the fetch() function
 	// on the global object (window or self)
 	//
 	// Return that as the export for use in Webpack, Browserify etc.
-	__webpack_require__(614);
+	__webpack_require__(615);
 	module.exports = self.fetch.bind(self);
 
 
 /***/ }),
-/* 614 */
+/* 615 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	(function (global, factory) {
