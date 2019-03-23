@@ -30,8 +30,6 @@ var app = (0, _express2.default)();
 
 app.use((0, _compression2.default)());
 app.use((0, _morgan2.default)('tiny'));
-app.use(_express2.default.static(_path2.default.join(__dirname, '../static')));
-app.use((0, _serveFavicon2.default)(_path2.default.join(__dirname, '../static/favicon.ico')));
 app.use(_bodyParser2.default.json());
 app.use(_bodyParser2.default.urlencoded({ extended: true }));
 
@@ -43,8 +41,14 @@ app.listen(port, function () {
 
 app.use('/vpc', require('./vpc'));
 
-app.get('*', function (req, res) {
-  res.sendFile(_path2.default.join(__dirname, '../static/index.html'));
-});
+if (process.env.NOFE) {
+  console.log("Starting server without frontend");
+} else {
+  app.use(_express2.default.static(_path2.default.join(__dirname, '../static')));
+  app.use((0, _serveFavicon2.default)(_path2.default.join(__dirname, '../static/favicon.ico')));
+  app.get('*', function (req, res) {
+    res.sendFile(_path2.default.join(__dirname, '../static/index.html'));
+  });
+}
 
 module.exports = app;

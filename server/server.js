@@ -9,8 +9,6 @@ const app = express();
 
 app.use(compression());
 app.use(morgan('tiny'));
-app.use(express.static(path.join(__dirname, '../static')));
-app.use(favicon(path.join(__dirname, '../static/favicon.ico')));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
@@ -23,8 +21,14 @@ app.listen(port, () => {
 
 app.use('/vpc', require('./vpc'));
 
-app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, '../static/index.html'));
-});
+if (process.env.NOFE) {
+  console.log("Starting server without frontend");
+} else {
+  app.use(express.static(path.join(__dirname, '../static')));
+  app.use(favicon(path.join(__dirname, '../static/favicon.ico')));
+  app.get('*', (req, res) => {
+    res.sendFile(path.join(__dirname, '../static/index.html'));
+  });
+}
 
 module.exports = app;
