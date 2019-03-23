@@ -4,7 +4,7 @@ PATH  := $(BIN):$(PATH)
 main:
 	clear
 	@echo [main]
-	@echo Project: Ansible-FE
+	@echo Project: Barnabas
 
 ready:
 	@echo [ready]
@@ -47,3 +47,5 @@ fast-tests: main ready compile-back babel-tests
 fast-tests-front: main ready babel-tests
 
 all: main ready compile-front compile-back
+
+build: main ready compile-front compile-back
