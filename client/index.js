@@ -2,17 +2,19 @@
 
 import React from 'react';
 import { render } from 'react-dom';
-import { Router, Route, IndexRoute, browserHistory } from 'react-router';
+import {
+    HashRouter,
+    Route
+} from 'react-router-dom';
 
 import Data from './components/data/data.js';
 import Main from './components/main/main.js';
 
 
 render(
-  <Router history={browserHistory}>
-    <Route path="/" component={Main}>
-        <IndexRoute component={Main} />
-      <Route path="/data" component={Data} />
-    </Route>
-  </Router>
+  <HashRouter>
+    <div>
+        <Route path="/" render={()=><Main items={Main}/>}/>
+    </div>
+  </HashRouter >
   , document.getElementById('root'));
