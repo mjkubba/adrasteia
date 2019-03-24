@@ -1,32 +1,37 @@
+const path = require('path');
+
 module.exports = {
-  externals: {
-    jquery: 'jQuery'
-  },
+  mode: "production",
   devtool: 'source-map',
   entry: [
-    'babel-polyfill',
+    '@babel/polyfill',
     './client/index',
   ],
   output: {
-    path: 'static/code',
+    path: path.join(__dirname,'static/code'),
     filename: 'bundle.js',
   },
   module: {
-    loaders: [{
+    rules: [
+    {
       test: /\.js$/,
       exclude: /node_modules/,
       loader: 'babel-loader',
     },
     {
       test: /\.css$/,
-      loader: 'style-loader',
-    }, {
-      test: /\.css$/,
-      loader: 'css-loader',
-      query: {
-        modules: true,
-        localIdentName: '[name]__[local]',
-      },
+      use: [
+        {
+          loader: 'style-loader',
+        },
+        {
+          loader: 'css-loader',
+          query: {
+            modules: true,
+            localIdentName: '[name]__[local]',
+          },
+        }
+      ]
     },
   ],
   },
