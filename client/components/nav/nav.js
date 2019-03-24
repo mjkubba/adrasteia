@@ -1,6 +1,5 @@
 import React from 'react';
 import axios from 'axios';
-import { browserHistory } from 'react-router';
 
 class Nav extends React.Component {
   constructor(props) {
@@ -36,11 +35,5 @@ class Nav extends React.Component {
   }
 
 }
-
-
-Nav.propTypes = {
-  params: React.PropTypes.object,
-  location: React.PropTypes.object,
-};
 
 export default Nav;

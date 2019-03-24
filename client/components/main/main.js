@@ -1,6 +1,5 @@
 import React from 'react';
 import axios from 'axios';
-import { browserHistory } from 'react-router';
 import Data from '../data/data'
 import VPCs from '../data/vpc'
 import Subnets from '../data/subnet'
@@ -81,10 +80,5 @@ class Main extends React.Component {
 
 }
 
-
-Main.propTypes = {
-  params: React.PropTypes.object,
-  location: React.PropTypes.object,
-};
 
 export default Main;
