@@ -2,7 +2,8 @@
   "name": "barnabas",
   "version": "1.0.3",
   "scripts": {
-    "dev": "LEVEL=silly PORT=3333 nodemon dst/server.js"
+    "dev": "LEVEL=silly PORT=3333 nodemon dst/server.js",
+    "start": "node dst/server.js"
   },
   "author": "MJ Kubba",
   "license": "MIT",
