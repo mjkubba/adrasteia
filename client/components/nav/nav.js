@@ -28,7 +28,7 @@ class Nav extends React.Component {
             <img src="images/db.png" width="100"/>
           </div>
           <div className="col-xs-10">
-            <h1> Barnabas </h1>
+            <h1 className="centerText"> Barnabas </h1>
           </div>
         </div>
       </div>

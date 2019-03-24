@@ -61,9 +61,9 @@ class Main extends React.Component {
       <div>
         <Nav />
         <div className="row">
-          <div className="col-sm-2">
+          <div className="col-sm-1">
           </div>
-          <div className="col-sm-10">
+          <div className="col-sm-11">
             <button type="button" className="btn btn-primary" onClick={this.loadMain}>Main</button>
             <button type="button" className="btn btn-primary" onClick={this.loadData}>Data</button>
             <button type="button" className="btn btn-primary" onClick={this.loadVPCs}>Add VPCs</button>

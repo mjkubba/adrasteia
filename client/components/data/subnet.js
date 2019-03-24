@@ -12,10 +12,12 @@ class Subnet extends React.Component {
     }
     this.saveData = this.saveData.bind(this);
     this.handleChange = this.handleChange.bind(this);
+    this.readVPC = this.readVPC.bind(this);
   }
 
   componentWillMount() {
     // This is empty right now
+    this.readVPC()
   }
 
   componentDidMount() {
@@ -25,7 +27,12 @@ class Subnet extends React.Component {
       this.state.test = event.target.value;
       event.preventDefault()
     }
-
+  readVPC() {
+    axios.get('/vpcs')
+      .then((response) => {
+        this.setState({ vpcs: response.data });
+      });
+  }
 saveData(subnetName, vpcName, description) {
   var bodyOut = { subnetName, vpcName,  description }
   console.log('about to make a call with');
@@ -42,11 +49,16 @@ saveData(subnetName, vpcName, description) {
 
 
   render() {
+    if (this.state.vpcs) {
+      this.items = this.state.vpcs.map((item, key) =>
+        <option key={item._id}>{item.vpcName}</option>
+      );
+    }
     return (
       <div>
         <div className="row">
-          <div className="col-sm-2"></div>
-            <div className="col-sm-8">
+          <div className="col-sm-1"></div>
+            <div className="col-sm-9">
               <form>
                 <div className="form-group">
                   <label htmlFor="subnetName">Subnet Name</label>
@@ -55,8 +67,9 @@ saveData(subnetName, vpcName, description) {
                 </div>
                 <div className="form-group">
                   <label htmlFor="VPC">VPC Name</label>
-                  <input type="text" className="form-control" id="VPC" ref="VPC" aria-describedby="vpcHelp" />
-                  <small id="vpcHelp" className="form-text text-muted">Your VPC Name</small>
+                  <select className="form-control" id="VPC" ref="VPC">
+                    {this.items}
+                  </select>
                 </div>
                 <div className="form-group">
                   <label htmlFor="description">Description</label>
@@ -74,8 +87,8 @@ saveData(subnetName, vpcName, description) {
             <div className="col-sm-2"></div>
           </div>
           <div className="row">
-            <div className="col-sm-2"></div>
-            <div className="col-sm-8">
+            <div className="col-sm-1"></div>
+            <div className="col-sm-9">
               {this.state.results}
             </div>
           </div>

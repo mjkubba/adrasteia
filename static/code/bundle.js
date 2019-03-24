@@ -37311,23 +37311,28 @@
 	  }, {
 	    key: 'readSubnets',
 	    value: function readSubnets(vpc) {
-	      console.log("YAY SUBNETS FOR VPC", vpc);
+	      var _this3 = this;
+	
+	      _axios2.default.get('/subnets/' + vpc).then(function (response) {
+	        console.log(response);
+	        _this3.setState({ subnets: response.data });
+	      });
 	    }
 	  }, {
 	    key: 'render',
 	    value: function render() {
-	      var _this3 = this;
+	      var _this4 = this;
 	
 	      if (this.state.results) {
 	        this.items = this.state.results.map(function (item, key) {
 	          return _react2.default.createElement(
 	            'tr',
-	            { key: item._id },
+	            { key: item._id, onClick: function onClick() {
+	                _this4.readSubnets(item.vpcName);
+	              } },
 	            _react2.default.createElement(
 	              'td',
-	              { onClick: function onClick() {
-	                  _this3.readSubnets(item.vpcName);
-	                } },
+	              null,
 	              item.vpcName
 	            ),
 	            _react2.default.createElement(
@@ -37343,16 +37348,34 @@
 	          );
 	        });
 	      }
+	      if (this.state.subnets) {
+	        this.subnets = this.state.subnets.map(function (item, key) {
+	          return _react2.default.createElement(
+	            'tr',
+	            { key: item._id },
+	            _react2.default.createElement(
+	              'td',
+	              null,
+	              item.subnetName
+	            ),
+	            _react2.default.createElement(
+	              'td',
+	              null,
+	              item.description
+	            )
+	          );
+	        });
+	      }
 	      return _react2.default.createElement(
 	        'div',
 	        null,
 	        _react2.default.createElement(
 	          'div',
 	          { className: 'row' },
-	          _react2.default.createElement('div', { className: 'col-sm-2' }),
+	          _react2.default.createElement('div', { className: 'col-sm-1' }),
 	          _react2.default.createElement(
 	            'div',
-	            { className: 'col-sm-8' },
+	            { className: 'col-sm-7' },
 	            _react2.default.createElement(
 	              'table',
 	              { className: 'table table-striped table-dark' },
@@ -37386,7 +37409,37 @@
 	              )
 	            )
 	          ),
-	          _react2.default.createElement('div', { className: 'col-sm-2' })
+	          _react2.default.createElement(
+	            'div',
+	            { className: 'col-sm-4' },
+	            _react2.default.createElement(
+	              'table',
+	              { className: 'table table-striped table-dark' },
+	              _react2.default.createElement(
+	                'thead',
+	                null,
+	                _react2.default.createElement(
+	                  'tr',
+	                  null,
+	                  _react2.default.createElement(
+	                    'th',
+	                    { scope: 'col' },
+	                    'subnetName'
+	                  ),
+	                  _react2.default.createElement(
+	                    'th',
+	                    { scope: 'col' },
+	                    'Description'
+	                  )
+	                )
+	              ),
+	              _react2.default.createElement(
+	                'tbody',
+	                null,
+	                this.subnets
+	              )
+	            )
+	          )
 	        )
 	      );
 	    }
@@ -39056,10 +39109,10 @@
 	        _react2.default.createElement(
 	          'div',
 	          { className: 'row' },
-	          _react2.default.createElement('div', { className: 'col-sm-2' }),
+	          _react2.default.createElement('div', { className: 'col-sm-1' }),
 	          _react2.default.createElement(
 	            'div',
-	            { className: 'col-sm-10' },
+	            { className: 'col-sm-11' },
 	            _react2.default.createElement(
 	              'button',
 	              { type: 'button', className: 'btn btn-primary', onClick: this.loadMain },
@@ -39193,10 +39246,10 @@
 	        _react2.default.createElement(
 	          'div',
 	          { className: 'row' },
-	          _react2.default.createElement('div', { className: 'col-sm-2' }),
+	          _react2.default.createElement('div', { className: 'col-sm-1' }),
 	          _react2.default.createElement(
 	            'div',
-	            { className: 'col-sm-8' },
+	            { className: 'col-sm-9' },
 	            _react2.default.createElement(
 	              'form',
 	              null,
@@ -39259,10 +39312,10 @@
 	        _react2.default.createElement(
 	          'div',
 	          { className: 'row' },
-	          _react2.default.createElement('div', { className: 'col-sm-2' }),
+	          _react2.default.createElement('div', { className: 'col-sm-1' }),
 	          _react2.default.createElement(
 	            'div',
-	            { className: 'col-sm-8' },
+	            { className: 'col-sm-9' },
 	            this.state.results
 	          )
 	        )
@@ -39319,6 +39372,7 @@
 	    };
 	    _this.saveData = _this.saveData.bind(_this);
 	    _this.handleChange = _this.handleChange.bind(_this);
+	    _this.readVPC = _this.readVPC.bind(_this);
 	    return _this;
 	  }
 	
@@ -39326,6 +39380,7 @@
 	    key: 'componentWillMount',
 	    value: function componentWillMount() {
 	      // This is empty right now
+	      this.readVPC();
 	    }
 	  }, {
 	    key: 'componentDidMount',
@@ -39337,36 +39392,54 @@
 	      event.preventDefault();
 	    }
 	  }, {
+	    key: 'readVPC',
+	    value: function readVPC() {
+	      var _this2 = this;
+	
+	      _axios2.default.get('/vpcs').then(function (response) {
+	        _this2.setState({ vpcs: response.data });
+	      });
+	    }
+	  }, {
 	    key: 'saveData',
 	    value: function saveData(subnetName, vpcName, description) {
-	      var _this2 = this;
+	      var _this3 = this;
 	
 	      var bodyOut = { subnetName: subnetName, vpcName: vpcName, description: description };
 	      console.log('about to make a call with');
 	      console.log(bodyOut);
 	      _axios2.default.post('/subnets', bodyOut).then(function (response) {
 	        console.log(response.data);
-	        _this2.refs.subnetName.value = "";
-	        _this2.refs.description.value = "";
-	        _this2.refs.VPC.value = "";
-	        _this2.setState({ results: response.data });
+	        _this3.refs.subnetName.value = "";
+	        _this3.refs.description.value = "";
+	        _this3.refs.VPC.value = "";
+	        _this3.setState({ results: response.data });
 	      });
 	    }
 	  }, {
 	    key: 'render',
 	    value: function render() {
-	      var _this3 = this;
+	      var _this4 = this;
 	
+	      if (this.state.vpcs) {
+	        this.items = this.state.vpcs.map(function (item, key) {
+	          return _react2.default.createElement(
+	            'option',
+	            { key: item._id },
+	            item.vpcName
+	          );
+	        });
+	      }
 	      return _react2.default.createElement(
 	        'div',
 	        null,
 	        _react2.default.createElement(
 	          'div',
 	          { className: 'row' },
-	          _react2.default.createElement('div', { className: 'col-sm-2' }),
+	          _react2.default.createElement('div', { className: 'col-sm-1' }),
 	          _react2.default.createElement(
 	            'div',
-	            { className: 'col-sm-8' },
+	            { className: 'col-sm-9' },
 	            _react2.default.createElement(
 	              'form',
 	              null,
@@ -39393,11 +39466,10 @@
 	                  { htmlFor: 'VPC' },
 	                  'VPC Name'
 	                ),
-	                _react2.default.createElement('input', { type: 'text', className: 'form-control', id: 'VPC', ref: 'VPC', 'aria-describedby': 'vpcHelp' }),
 	                _react2.default.createElement(
-	                  'small',
-	                  { id: 'vpcHelp', className: 'form-text text-muted' },
-	                  'Your VPC Name'
+	                  'select',
+	                  { className: 'form-control', id: 'VPC', ref: 'VPC' },
+	                  this.items
 	                )
 	              ),
 	              _react2.default.createElement(
@@ -39418,7 +39490,7 @@
 	              _react2.default.createElement(
 	                'button',
 	                { type: 'button', className: 'btn btn-primary', onClick: function onClick() {
-	                    _this3.saveData(_this3.refs.subnetName.value, _this3.refs.VPC.value, _this3.refs.description.value);
+	                    _this4.saveData(_this4.refs.subnetName.value, _this4.refs.VPC.value, _this4.refs.description.value);
 	                  } },
 	                'Add!'
 	              )
@@ -39429,10 +39501,10 @@
 	        _react2.default.createElement(
 	          'div',
 	          { className: 'row' },
-	          _react2.default.createElement('div', { className: 'col-sm-2' }),
+	          _react2.default.createElement('div', { className: 'col-sm-1' }),
 	          _react2.default.createElement(
 	            'div',
-	            { className: 'col-sm-8' },
+	            { className: 'col-sm-9' },
 	            this.state.results
 	          )
 	        )
@@ -39516,7 +39588,7 @@
 	            { className: 'col-xs-10' },
 	            _react2.default.createElement(
 	              'h1',
-	              null,
+	              { className: 'centerText' },
 	              ' Barnabas '
 	            )
 	          )

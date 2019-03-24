@@ -45,8 +45,8 @@ saveData(accountNumber, vpcName, description) {
     return (
       <div>
         <div className="row">
-          <div className="col-sm-2"></div>
-            <div className="col-sm-8">
+          <div className="col-sm-1"></div>
+            <div className="col-sm-9">
               <form>
                 <div className="form-group">
                   <label htmlFor="accountNumber">Account Number</label>
@@ -74,8 +74,8 @@ saveData(accountNumber, vpcName, description) {
             <div className="col-sm-2"></div>
           </div>
           <div className="row">
-            <div className="col-sm-2"></div>
-            <div className="col-sm-8">
+            <div className="col-sm-1"></div>
+            <div className="col-sm-9">
               {this.state.results}
             </div>
           </div>

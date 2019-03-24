@@ -35,17 +35,27 @@ class Data extends React.Component {
   }
 
   readSubnets(vpc) {
-    console.log("YAY SUBNETS FOR VPC", vpc);
+    axios.get('/subnets/'+vpc)
+      .then((response) => {
+        console.log(response);
+        this.setState({ subnets: response.data });
+      });
   }
 
   render() {
     if (this.state.results) {
       this.items = this.state.results.map((item, key) =>
-        <tr key={item._id}>
-          <td onClick={() => { this.readSubnets(
-            item.vpcName
-          ); }}>{item.vpcName}</td>
+        <tr key={item._id} onClick={() => { this.readSubnets(item.vpcName); }}>
+          <td>{item.vpcName}</td>
           <td>{item.accountNumber}</td>
+          <td>{item.description}</td>
+        </tr>
+      );
+    }
+    if (this.state.subnets) {
+      this.subnets = this.state.subnets.map((item, key) =>
+        <tr key={item._id}>
+          <td>{item.subnetName}</td>
           <td>{item.description}</td>
         </tr>
       );
@@ -53,8 +63,8 @@ class Data extends React.Component {
     return (
       <div>
         <div className="row">
-          <div className="col-sm-2"></div>
-          <div className="col-sm-8">
+          <div className="col-sm-1"></div>
+          <div className="col-sm-7">
           <table className="table table-striped table-dark">
             <thead>
               <tr>
@@ -68,7 +78,19 @@ class Data extends React.Component {
             </tbody>
           </table>
           </div>
-          <div className="col-sm-2">{this.subnets}</div>
+          <div className="col-sm-4">
+          <table className="table table-striped table-dark">
+            <thead>
+              <tr>
+                <th scope="col">subnetName</th>
+                <th scope="col">Description</th>
+              </tr>
+            </thead>
+            <tbody>
+              {this.subnets}
+            </tbody>
+          </table>
+          </div>
         </div>
       </div>
     );
