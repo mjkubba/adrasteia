@@ -37371,7 +37371,7 @@
 	        null,
 	        _react2.default.createElement(
 	          'div',
-	          { className: 'row' },
+	          { className: 'row paddingTop20px' },
 	          _react2.default.createElement('div', { className: 'col-sm-1' }),
 	          _react2.default.createElement(
 	            'div',
@@ -39108,7 +39108,7 @@
 	        _react2.default.createElement(_nav2.default, null),
 	        _react2.default.createElement(
 	          'div',
-	          { className: 'row' },
+	          { className: 'row paddingTop20px' },
 	          _react2.default.createElement('div', { className: 'col-sm-1' }),
 	          _react2.default.createElement(
 	            'div',
@@ -39245,7 +39245,7 @@
 	        null,
 	        _react2.default.createElement(
 	          'div',
-	          { className: 'row' },
+	          { className: 'row paddingTop20px' },
 	          _react2.default.createElement('div', { className: 'col-sm-1' }),
 	          _react2.default.createElement(
 	            'div',
@@ -39435,7 +39435,7 @@
 	        null,
 	        _react2.default.createElement(
 	          'div',
-	          { className: 'row' },
+	          { className: 'row paddingTop20px' },
 	          _react2.default.createElement('div', { className: 'col-sm-1' }),
 	          _react2.default.createElement(
 	            'div',
@@ -39574,22 +39574,22 @@
 	    value: function render() {
 	      return _react2.default.createElement(
 	        'div',
-	        null,
+	        { className: 'navBG' },
 	        _react2.default.createElement(
 	          'div',
 	          { className: 'row' },
 	          _react2.default.createElement(
 	            'div',
-	            { className: 'col-xs-2' },
-	            _react2.default.createElement('img', { src: 'images/db.png', width: '100' })
+	            { className: 'col-sm-2' },
+	            _react2.default.createElement('img', { src: 'images/db.svg', width: '70' })
 	          ),
 	          _react2.default.createElement(
 	            'div',
-	            { className: 'col-xs-10' },
+	            { className: 'col-sm-10' },
 	            _react2.default.createElement(
 	              'h1',
 	              { className: 'centerText' },
-	              ' Barnabas '
+	              'Barnabas'
 	            )
 	          )
 	        )

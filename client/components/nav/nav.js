@@ -22,13 +22,13 @@ class Nav extends React.Component {
 
   render() {
     return (
-      <div>
+      <div className="navBG">
         <div className="row">
-          <div className="col-xs-2">
-            <img src="images/db.png" width="100"/>
+          <div className="col-sm-2">
+            <img src="images/db.svg" width="70"/>
           </div>
-          <div className="col-xs-10">
-            <h1 className="centerText"> Barnabas </h1>
+          <div className="col-sm-10">
+            <h1 className="centerText">Barnabas</h1>
           </div>
         </div>
       </div>

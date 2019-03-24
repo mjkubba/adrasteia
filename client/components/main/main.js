@@ -60,14 +60,14 @@ class Main extends React.Component {
     return (
       <div>
         <Nav />
-        <div className="row">
+        <div className="row paddingTop20px">
           <div className="col-sm-1">
           </div>
           <div className="col-sm-11">
-            <button type="button" className="btn btn-primary" onClick={this.loadMain}>Main</button>
-            <button type="button" className="btn btn-primary" onClick={this.loadData}>Data</button>
-            <button type="button" className="btn btn-primary" onClick={this.loadVPCs}>Add VPCs</button>
-            <button type="button" className="btn btn-primary" onClick={this.loadSubnets}>Add Subnets</button>
+            <button type="button" className="btn btn-outline-primary" onClick={this.loadMain}>Main</button>
+            <button type="button" className="btn btn-outline-primary" onClick={this.loadData}>Data</button>
+            <button type="button" className="btn btn-outline-primary" onClick={this.loadVPCs}>Add VPCs</button>
+            <button type="button" className="btn btn-outline-primary" onClick={this.loadSubnets}>Add Subnets</button>
           </div>
         </div>
         <div className="row">

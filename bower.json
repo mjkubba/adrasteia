@@ -1,8 +1,8 @@
 {
   "name": "ansible-fe",
   "dependencies": {
-    "jquery": "2",
-    "bootstrap": "^3.3.6",
+    "jquery": "3.3.1",
+    "bootstrap": "^4.3.1",
     "font-awesome": "fontawesome#^4.6.3"
   }
 }

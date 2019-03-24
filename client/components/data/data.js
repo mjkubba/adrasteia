@@ -62,7 +62,7 @@ class Data extends React.Component {
     }
     return (
       <div>
-        <div className="row">
+        <div className="row paddingTop20px">
           <div className="col-sm-1"></div>
           <div className="col-sm-7">
           <table className="table table-striped table-dark">

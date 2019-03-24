@@ -5,9 +5,16 @@
     "dev": "LEVEL=silly PORT=3333 nodemon dst/server.js",
     "start": "node dst/server.js"
   },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/mjkubba/barnabas.git"
+  },
   "author": "MJ Kubba",
   "license": "MIT",
   "devDependencies": {
+    "jquery": "^3.3.1",
+    "bootstrap": "^3.3.6",
+    "font-awesome": "^4.6.3",
     "axios": "^0.18.0",
     "babel-cli": "^6.11.4",
     "babel-core": "^6.26.3",

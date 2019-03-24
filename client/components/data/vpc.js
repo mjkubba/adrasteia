@@ -44,7 +44,7 @@ saveData(accountNumber, vpcName, description) {
   render() {
     return (
       <div>
-        <div className="row">
+        <div className="row paddingTop20px">
           <div className="col-sm-1"></div>
             <div className="col-sm-9">
               <form>
