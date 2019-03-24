@@ -2,18 +2,18 @@
 Tool to save your VPC Info
 
 
-## building:
+## Building:
 `npm i`   
 Then:   
 `make build`   
 
 ## Requirements:
-set your mongoDB location by using:   
-`export MONGO_DB=mongodb://<mongodb location>:<mongodb port>/<database name>`
+Set your mongoDB location by using:   
+`export MONGO_DB=mongodb://<IP>:<PORT>/<DB>`
 
-if you need mongoDB on docker use:   
+If you need mongoDB on docker use:   
 `docker run --name=mongo -d -p 27017:27017 mongo`   
-then    
+Then    
 `export MONGO_DB=mongodb://localhost:27017/mydb`
 
 ## To Run:
@@ -21,10 +21,12 @@ then
 Build first then start the server using:  
 `node /dst/server.js`
 
-### Backend + docker frontend:
+### Backend Only:
 Build first then set:  
 `export NOFE=true`   
-start the server using:   
+Start the server using:   
 `node /dst/server.js`   
-start the frontend with:   
-`docker run --name=barnabas -d -p 8080:80 mjkubba/barnabas`
+
+### Using Docker:
+Start with:   
+`docker run --name=barnabas-be -p 3333:3333 -e MONGO_DB=mongodb://<IP>:<PORT>/<DB> mjkubba/barnabas`
