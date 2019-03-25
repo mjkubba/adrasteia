@@ -25,8 +25,8 @@ var port = process.env.PORT || 3333;
 app.listen(port, function () {
   console.log('info', '[EXPRESS] - listening port: %d', port);
 });
-app.use('/vpcs', require('./vpcs'));
-app.use('/subnets', require('./subnets'));
+app.use('/vpcs', require('./controllers/vpcs'));
+app.use('/subnets', require('./controllers/subnets'));
 
 if (process.env.NOFE) {
   console.log("Starting server without frontend");
