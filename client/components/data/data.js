@@ -43,6 +43,7 @@ class Data extends React.Component {
   }
 
   render() {
+    this.right1 = (<div/>)
     if (this.state.results) {
       this.items = this.state.results.map((item, key) =>
         <tr key={item._id} onClick={() => { this.readSubnets(item.vpcName); }}>
@@ -60,6 +61,19 @@ class Data extends React.Component {
           <td>{item.description}</td>
         </tr>
       );
+      this.right1 = (
+        <table className="table table-striped table-dark">
+          <thead>
+            <tr>
+              <th scope="col">subnetName</th>
+              <th scope="col">CIDR</th>
+              <th scope="col">Description</th>
+            </tr>
+          </thead>
+          <tbody>
+            {this.subnets}
+          </tbody>
+        </table>)
     }
     return (
       <div>
@@ -80,18 +94,7 @@ class Data extends React.Component {
           </table>
           </div>
           <div className="col-sm-4">
-          <table className="table table-striped table-dark">
-            <thead>
-              <tr>
-                <th scope="col">subnetName</th>
-                <th scope="col">CIDR</th>
-                <th scope="col">Description</th>
-              </tr>
-            </thead>
-            <tbody>
-              {this.subnets}
-            </tbody>
-          </table>
+            {this.right1}
           </div>
         </div>
       </div>
