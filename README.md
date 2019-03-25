@@ -66,6 +66,7 @@ eg:
 `{
 "vpcName": "myvpc",
 "subnetName": "subnet123",
+"cidr": "10.0.0.0/16",
 "description": "my access subnet"
 }`
 
