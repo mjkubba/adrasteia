@@ -22,6 +22,10 @@ var subnet = new _mongoose.default.Schema({
     type: String,
     default: ''
   },
+  cidr: {
+    type: String,
+    default: ''
+  },
   vpcName: {
     type: String,
     default: ''
@@ -30,9 +34,21 @@ var subnet = new _mongoose.default.Schema({
 
 var MySubnet = _mongoose.default.model('subnet', subnet);
 
-router.get('/:vpcName', function (req, res) {
+router.get('/vpc/:vpcName', function (req, res) {
   MySubnet.find({
     vpcName: req.params.vpcName
+  }, function (err, docs) {
+    if (err) {
+      console.log("Error: " + err);
+      res.send(err);
+    } else {
+      res.send(docs);
+    }
+  });
+});
+router.get('/cidr/:cidr', function (req, res) {
+  MySubnet.find({
+    cidr: req.params.cidr
   }, function (err, docs) {
     if (err) {
       console.log("Error: " + err);
@@ -53,11 +69,13 @@ router.get('/', function (req, res) {
   });
 });
 router.post('/', function (req, res) {
+  console.log(req.body);
   MySubnet.update({
     subnetName: req.body.subnetName
   }, {
     vpcName: req.body.vpcName,
     description: req.body.description,
+    cidr: req.body.cidr,
     subnetName: req.body.subnetName
   }, {
     upsert: true

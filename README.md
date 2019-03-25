@@ -56,7 +56,8 @@ eg:
 
 ### Subnets:
 - GET /subnets : will give you json of all Subnets
-- GET /subnets/<VPC Name> : will give you the subnets for the provided vpc
+- GET /subnets/vpc/<VPC Name> : will give you the subnets for the provided vpc
+- GET /subnets/cidr/<CIDR> : will give you the subnets for the provided CIDR
 - POST /subnets : will save new subnet to db, required input json:
   - vpcName
   - subnetName

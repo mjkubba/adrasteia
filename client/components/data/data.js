@@ -35,7 +35,7 @@ class Data extends React.Component {
   }
 
   readSubnets(vpc) {
-    axios.get('/subnets/'+vpc)
+    axios.get('/subnets/vpc/'+vpc)
       .then((response) => {
         console.log(response);
         this.setState({ subnets: response.data });
@@ -56,6 +56,7 @@ class Data extends React.Component {
       this.subnets = this.state.subnets.map((item, key) =>
         <tr key={item._id}>
           <td>{item.subnetName}</td>
+          <td>{item.cidr}</td>
           <td>{item.description}</td>
         </tr>
       );
@@ -83,6 +84,7 @@ class Data extends React.Component {
             <thead>
               <tr>
                 <th scope="col">subnetName</th>
+                <th scope="col">CIDR</th>
                 <th scope="col">Description</th>
               </tr>
             </thead>

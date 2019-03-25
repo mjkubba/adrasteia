@@ -33,8 +33,8 @@ class Subnet extends React.Component {
         this.setState({ vpcs: response.data });
       });
   }
-saveData(subnetName, vpcName, description) {
-  var bodyOut = { subnetName, vpcName,  description }
+saveData(subnetName, vpcName, cidr, description) {
+  var bodyOut = { subnetName, vpcName, cidr, description }
   console.log('about to make a call with');
   console.log(bodyOut);
   axios.post('/subnets', bodyOut)
@@ -42,6 +42,7 @@ saveData(subnetName, vpcName, description) {
       console.log(response.data);
       this.refs.subnetName.value = ""
       this.refs.description.value = ""
+      this.refs.cidr.value = ""
       this.refs.VPC.value = ""
       this.setState({ results: response.data });
     });
@@ -76,10 +77,16 @@ saveData(subnetName, vpcName, description) {
                   <input type="text" className="form-control" id="description" ref="description" aria-describedby="descHelp" placeholder="" />
                   <small id="descHelp" className="form-text text-muted">VPC description</small>
                 </div>
+                <div className="form-group">
+                  <label htmlFor="cidr">cidr</label>
+                  <input type="text" className="form-control" id="cidr" ref="cidr" aria-describedby="cidrHelp" placeholder="" />
+                  <small id="cidrHelp" className="form-text text-muted">cidr</small>
+                </div>
 
                 <button type="button" className="btn btn-primary" onClick={() => { this.saveData(
                   this.refs.subnetName.value,
                   this.refs.VPC.value,
+                  this.refs.cidr.value,
                   this.refs.description.value,
                 ); }}>Add!</button>
               </form>
