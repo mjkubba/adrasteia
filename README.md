@@ -1,4 +1,4 @@
-# barnabas
+# adrasteia
 Tool to save your VPC Info
 
 ### Why nodejs:
@@ -37,7 +37,7 @@ Start the server using:
 
 ### Using Docker:
 Start with:   
-`docker run --name=barnabas-be -p 3333:3333 -e MONGO_DB=mongodb://<IP>:<PORT>/<DB> mjkubba/barnabas`
+`docker run --name=adrasteia-be -p 3333:3333 -e MONGO_DB=mongodb://<IP>:<PORT>/<DB> mjkubba/adrasteia`
 
 ## API
 ### VPCs:

@@ -4,7 +4,7 @@ PATH  := $(BIN):$(PATH)
 main:
 	clear
 	@echo [main]
-	@echo Project: Barnabas
+	@echo Project: adrasteia
 
 ready:
 	@echo [ready]

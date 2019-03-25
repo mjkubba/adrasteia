@@ -27,7 +27,7 @@ class Nav extends React.Component {
             <img src="images/db.svg" width="70"/>
           </div>
           <div className="col-sm-10">
-            <h1 className="centerText paddingTop8px">Barnabas</h1>
+            <h1 className="centerText paddingTop8px">adrasteia</h1>
           </div>
         </div>
       </div>
