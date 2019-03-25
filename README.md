@@ -27,17 +27,17 @@ Then
 ## To Run:
 ### All in one:
 Build first then start the server using:  
-`node /dst/server.js`
+`node dst/server.js`
 
 ### Backend Only:
 Build first then set:  
 `export NOFE=true`   
 Start the server using:   
-`node /dst/server.js`   
+`node dst/server.js`   
 
 ### Using Docker:
 Start with:   
-`docker run --name=adrasteia-be -p 3333:3333 -e MONGO_DB=mongodb://<IP>:<PORT>/<DB> mjkubba/adrasteia`
+`docker run --name=adrasteia -p 3333:3333 -e MONGO_DB=mongodb://<IP>:<PORT>/<DB> mjkubba/adrasteia`
 
 ## API
 ### VPCs:
