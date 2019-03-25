@@ -62,17 +62,17 @@ saveData(subnetName, vpcName, cidr, description) {
             <div className="col-sm-9">
               <form>
                 <div className="form-group">
-                  <label htmlFor="subnetName">Subnet Name</label>
-                  <input type="text" className="form-control" id="subnetName" ref="subnetName" aria-describedby="subnetHelp" />
-                  <small id="subnetHelp" className="form-text text-muted">Enter your subnet name</small>
-                </div>
-                <div className="form-group">
                   <label htmlFor="VPC">VPC Name</label>
                   <select className="form-control" id="VPC" ref="VPC">
                     {this.items}
                   </select>
                 </div>
                 <div className="form-group">
+                  <label htmlFor="subnetName">Subnet Name</label>
+                  <input type="text" className="form-control" id="subnetName" ref="subnetName" aria-describedby="subnetHelp" />
+                  <small id="subnetHelp" className="form-text text-muted">Enter your subnet name</small>
+                </div>
+                  <div className="form-group">
                   <label htmlFor="description">Description</label>
                   <input type="text" className="form-control" id="description" ref="description" aria-describedby="descHelp" placeholder="" />
                   <small id="descHelp" className="form-text text-muted">VPC description</small>

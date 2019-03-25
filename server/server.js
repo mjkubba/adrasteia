@@ -21,6 +21,7 @@ app.listen(port, () => {
 
 app.use('/vpcs', require('./controllers/vpcs'));
 app.use('/subnets', require('./controllers/subnets'));
+app.use('/accounts', require('./controllers/accounts'));
 
 if (process.env.NOFE) {
   console.log("Starting server without frontend");

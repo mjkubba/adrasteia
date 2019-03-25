@@ -42,6 +42,9 @@ fast-tests-watch: fast-tests
 	@echo [fast-tests-watch]
 	@$(BIN)/chokidar 'client/**/*.js' 'server/**/*.js' 'test/**/*.js' -c 'make fast-tests'
 
+run:
+	@node dst/server.js
+
 fast-tests: main ready compile-back babel-tests
 
 fast-tests-front: main ready babel-tests
@@ -49,3 +52,5 @@ fast-tests-front: main ready babel-tests
 all: main ready compile-front compile-back
 
 build: main ready compile-front compile-back
+
+build-r: main ready compile-front compile-back run

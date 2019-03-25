@@ -10,13 +10,14 @@ class Data extends React.Component {
       view: 'test',
       isOpen: false
     }
-    this.readVPC = this.readVPC.bind(this);
+    this.readAccounts = this.readAccounts.bind(this);
+    this.readVPCs = this.readVPCs.bind(this);
     this.readSubnets = this.readSubnets.bind(this);
     this.handleChange = this.handleChange.bind(this);
   }
 
   componentWillMount() {
-    this.readVPC()
+    this.readAccounts()
   }
 
   componentDidMount() {
@@ -27,10 +28,17 @@ class Data extends React.Component {
       event.preventDefault()
     }
 
-  readVPC() {
-    axios.get('/vpcs')
+  readAccounts() {
+    axios.get('/accounts')
       .then((response) => {
-        this.setState({ results: response.data });
+        this.setState({ accounts: response.data });
+      });
+  }
+
+  readVPCs(account) {
+    axios.get('/vpcs/account/'+account)
+      .then((response) => {
+        this.setState({ vpcs: response.data, subnets: null });
       });
   }
 
@@ -44,14 +52,35 @@ class Data extends React.Component {
 
   render() {
     this.right1 = (<div/>)
-    if (this.state.results) {
-      this.items = this.state.results.map((item, key) =>
-        <tr key={item._id} onClick={() => { this.readSubnets(item.vpcName); }}>
-          <td>{item.vpcName}</td>
+    this.right2 = (<div/>)
+    this.accounts = (<div/>)
+    if (this.state.accounts) {
+      this.accounts = this.state.accounts.map((item, key) =>
+        <tr key={item._id} onClick={() => { this.readVPCs(item.accountNumber); }}>
           <td>{item.accountNumber}</td>
           <td>{item.description}</td>
         </tr>
       );
+    }
+    if (this.state.vpcs) {
+      this.vpcs = this.state.vpcs.map((item, key) =>
+        <tr key={item._id} onClick={() => { this.readSubnets(item.vpcName); }}>
+          <td>{item.vpcName}</td>
+          <td>{item.description}</td>
+        </tr>
+      );
+      this.right1 = (
+        <table className="table table-striped table-dark">
+          <thead>
+            <tr>
+              <th scope="col">vpcName</th>
+              <th scope="col">Description</th>
+            </tr>
+          </thead>
+          <tbody>
+            {this.vpcs}
+          </tbody>
+        </table>)
     }
     if (this.state.subnets) {
       this.subnets = this.state.subnets.map((item, key) =>
@@ -61,7 +90,7 @@ class Data extends React.Component {
           <td>{item.description}</td>
         </tr>
       );
-      this.right1 = (
+      this.right2 = (
         <table className="table table-striped table-dark">
           <thead>
             <tr>
@@ -79,22 +108,24 @@ class Data extends React.Component {
       <div>
         <div className="row paddingTop20px">
           <div className="col-sm-1"></div>
-          <div className="col-sm-7">
+          <div className="col-sm-3">
           <table className="table table-striped table-dark">
             <thead>
               <tr>
-                <th scope="col">VPC Name</th>
                 <th scope="col">accountNumber</th>
                 <th scope="col">Description</th>
               </tr>
             </thead>
             <tbody>
-              {this.items}
+              {this.accounts}
             </tbody>
           </table>
           </div>
           <div className="col-sm-4">
             {this.right1}
+          </div>
+          <div className="col-sm-4">
+            {this.right2}
           </div>
         </div>
       </div>

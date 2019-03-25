@@ -2,6 +2,7 @@ import React from 'react';
 import axios from 'axios';
 import Data from '../data/data'
 import VPCs from '../data/vpc'
+import Accounts from '../data/account'
 import Subnets from '../data/subnet'
 import Nav from '../nav/nav';
 
@@ -13,6 +14,7 @@ class Main extends React.Component {
     }
     this.loadData = this.loadData.bind(this);
     this.loadMain = this.loadMain.bind(this);
+    this.loadAccounts = this.loadAccounts.bind(this);
     this.loadVPCs = this.loadVPCs.bind(this);
     this.loadSubnets = this.loadSubnets.bind(this);
   }
@@ -27,6 +29,11 @@ class Main extends React.Component {
   loadData = (e) => {
       e.preventDefault()
       this.setState({ view: "data" })
+    }
+
+  loadAccounts = (e) => {
+      e.preventDefault()
+      this.setState({ view: "accounts" })
     }
 
   loadVPCs = (e) => {
@@ -49,6 +56,8 @@ class Main extends React.Component {
     let middle
     if (this.state.view === "data") {
       middle = <Data />
+    } else if (this.state.view === "accounts") {
+      middle = <Accounts />
     } else if (this.state.view === "vpcs") {
       middle = <VPCs />
     } else if (this.state.view === "subnets") {
@@ -65,6 +74,7 @@ class Main extends React.Component {
           <div className="col-sm-11">
             <button type="button" className="btn btn-outline-primary" onClick={this.loadMain}>Main</button>
             <button type="button" className="btn btn-outline-primary" onClick={this.loadData}>Data</button>
+            <button type="button" className="btn btn-outline-primary" onClick={this.loadAccounts}>Add Accounts</button>
             <button type="button" className="btn btn-outline-primary" onClick={this.loadVPCs}>Add VPCs</button>
             <button type="button" className="btn btn-outline-primary" onClick={this.loadSubnets}>Add Subnets</button>
           </div>
