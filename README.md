@@ -43,6 +43,7 @@ Start with:
 ### VPCs:
 - GET /vpcs : will give you json of all VPCs
 - GET /vpcs/<VPC NAME> : Will only give you the provided vpc name, and retrns empty json array if not found
+- GET /account/<ACCOUNT NUMBER> : Will only give you the provided account number name, and retrns empty json array if not found
 - POST /vpcs Will save new vpc to the db, required input json:
   - vpcName
   - accountNumber

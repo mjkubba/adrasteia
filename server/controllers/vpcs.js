@@ -13,8 +13,19 @@ const vpc = new mongoose.Schema({
 const MyVpc = mongoose.model('vpc', vpc);
 
 
-router.get('/:vpcName', (req, res) => {
+router.get('/vpc/:vpcName', (req, res) => {
   MyVpc.find({ vpcName: req.params.vpcName }, function (err, docs) {
+    if (err) {
+      console.log("Error: " + err);
+      res.send(err)
+    } else {
+      res.send(docs)
+    }
+  });
+});
+
+router.get('/account/:accountNumber', (req, res) => {
+  MyVpc.find({ accountNumber: req.params.accountNumber }, function (err, docs) {
     if (err) {
       console.log("Error: " + err);
       res.send(err)
