@@ -16,7 +16,7 @@ compile-front:
 
 compile-back:
 	@echo [compile-back]
-	@$(BIN)/babel server -d dst -q
+	@$(BIN)/babel server -d dst
 
 lint:
 	@echo [lint]
