@@ -1,16 +1,13 @@
 # adrasteia
-Tool to save your VPC Info
 
-### Why nodejs:
-Many reasons why I picked nodejs,
-* big reason is frontend, the frontend is written in reactjs and it will be easier to bundle the backend together using node vs building a separate backend in a different language.
-* async, its fast and async language by default without adding more libraries (I know, I know! I'm already using like 10,000 of them now probably)
-* easy to test, even though I'm not doing a good job at it
-* native json support + easy to use mongoose
+No longer needed, please checkout https://docs.aws.amazon.com/vpc/latest/ipam/what-it-is-ipam.html
+
+
+~Tool to save your VPC Info~
 
 
 
-## Building:
+## Build:
 `npm i`   
 Then:   
 `make build`   
