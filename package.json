@@ -25,7 +25,7 @@
     "@babel/polyfill": "^7.0.0",
     "@babel/preset-env": "^7.4.2",
     "@babel/preset-react": "^7.0.0",
-    "axios": "^1.7.9",
+    "axios": "^1.8.2",
     "babel-eslint": "^10.0.1",
     "babel-loader": "^8",
     "chokidar-cli": "^3.0.0",
